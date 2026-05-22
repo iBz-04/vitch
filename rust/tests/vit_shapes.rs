@@ -4,7 +4,7 @@ use vit_tch::{
     CCT, CCTConfig, DeepViT, ImageSize, LocalViT, MAE, MAEConfig, ParallelViT, Pool, SimMIM,
     SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
     SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig,
-    ViTConfig, ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
+    ViTConfig, ViTForSmallDataset, ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
 };
 
 #[test]
@@ -398,6 +398,29 @@ fn cct_outputs_logits_shape() {
             pooling_kernel_size: 3,
             pooling_stride: 2,
             pooling_padding: 1,
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn vit_for_small_dataset_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = ViTForSmallDataset::new(
+        &vs.root(),
+        ViTConfig {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(8),
+            num_classes: 10,
+            dim: 128,
+            depth: 2,
+            heads: 4,
+            dim_head: 32,
+            mlp_dim: 256,
             ..Default::default()
         },
     );

@@ -15,5 +15,5 @@ pub use config::{
 pub use models::{
     CCT, DeepViT, LocalViT, MAE, ParallelViT, SimMIM, SimpleViT, SimpleViT1D, SimpleViT3D,
     SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D, ViT3D,
-    ViTWithDecorr, ViTWithPatchDropout,
+    ViTForSmallDataset, ViTWithDecorr, ViTWithPatchDropout,
 };

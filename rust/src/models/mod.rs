@@ -13,6 +13,7 @@ pub mod simple_vit_with_register_tokens;
 pub mod vit;
 pub mod vit_1d;
 pub mod vit_3d;
+pub mod vit_for_small_dataset;
 pub mod vit_with_decorr;
 pub mod vit_with_patch_dropout;
 
@@ -31,5 +32,6 @@ pub use simple_vit_with_register_tokens::SimpleViTWithRegisterTokens;
 pub use vit::ViT;
 pub use vit_1d::ViT1D;
 pub use vit_3d::ViT3D;
+pub use vit_for_small_dataset::ViTForSmallDataset;
 pub use vit_with_decorr::ViTWithDecorr;
 pub use vit_with_patch_dropout::ViTWithPatchDropout;
