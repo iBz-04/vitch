@@ -48,7 +48,7 @@ impl DecorrelationLoss {
         let eye = Tensor::eye(dim, (tokens.kind(), tokens.device()));
         let loss = dist.pow_tensor_scalar(2.0) * (Tensor::ones_like(&eye) - eye)
             / ((dim - 1) * dim) as f64;
-        loss.sum_dim_intlist(&[-1, -2], false, Kind::Float)
+        loss.sum_dim_intlist(&[-1_i64, -2][..], false, Kind::Float)
             .mean(Kind::Float)
     }
 }

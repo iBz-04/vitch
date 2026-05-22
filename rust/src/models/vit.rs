@@ -1,4 +1,4 @@
-use tch::{IndexOp, Tensor, nn};
+use tch::{IndexOp, Tensor, nn, nn::ModuleT};
 
 use crate::{
     config::{Pool, ViTConfig},
