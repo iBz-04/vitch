@@ -1,4 +1,4 @@
-use tch::{nn, nn::ModuleT, Tensor};
+use tch::{Tensor, nn, nn::ModuleT};
 
 use crate::{
     config::ViTConfig,

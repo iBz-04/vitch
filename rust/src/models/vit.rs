@@ -1,4 +1,4 @@
-use tch::{nn, IndexOp, Tensor};
+use tch::{IndexOp, Tensor, nn};
 
 use crate::{
     config::{Pool, ViTConfig},
@@ -16,7 +16,13 @@ pub struct PatchEmbedding {
 }
 
 impl PatchEmbedding {
-    pub fn new(vs: &nn::Path, patch_dim: i64, dim: i64, patch_height: i64, patch_width: i64) -> Self {
+    pub fn new(
+        vs: &nn::Path,
+        patch_dim: i64,
+        dim: i64,
+        patch_height: i64,
+        patch_width: i64,
+    ) -> Self {
         let norm1 = nn::layer_norm(vs / "norm1", vec![patch_dim], Default::default());
         let linear = nn::linear(vs / "linear", patch_dim, dim, Default::default());
         let norm2 = nn::layer_norm(vs / "norm2", vec![dim], Default::default());

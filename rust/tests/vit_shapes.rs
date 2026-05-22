@@ -1,6 +1,6 @@
-use tch::{nn, Device, Kind, Tensor};
 use tch::nn::ModuleT;
-use vit_tch::{ImageSize, Pool, SimpleViT, ViT, ViTConfig};
+use tch::{Device, Kind, Tensor, nn};
+use vit_tch::{ImageSize, Pool, SimpleViT, ViT, ViTConfig, ViTWithDecorr, ViTWithDecorrConfig};
 
 #[test]
 fn vit_outputs_logits_shape() {
@@ -91,6 +91,33 @@ fn simple_vit_outputs_logits_shape() {
     let preds = model.forward_t(&img, false);
 
     assert_eq!(preds.size(), [1, 1000]);
+}
+
+#[test]
+fn vit_with_decorr_outputs_logits_and_aux_loss() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = ViTWithDecorr::new(
+        &vs.root(),
+        ViTWithDecorrConfig {
+            vit: ViTConfig {
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(4),
+                num_classes: 100,
+                dim: 128,
+                depth: 2,
+                heads: 8,
+                dim_head: 16,
+                mlp_dim: 512,
+                ..Default::default()
+            },
+            decorr_sample_frac: 1.0,
+        },
+    );
+    let img = Tensor::randn([2, 3, 32, 32], (Kind::Float, Device::Cpu));
+    let (logits, aux_loss) = model.forward_t_with_aux(&img, true, true);
+
+    assert_eq!(logits.size(), [2, 100]);
+    assert_eq!(aux_loss.size(), [] as [i64; 0]);
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use tch::{nn, Tensor};
+use tch::{Tensor, nn};
 
 use crate::tensor::{merge_heads, split_heads};
 
@@ -66,7 +66,12 @@ impl Attention {
         let to_out = if heads == 1 && dim_head == dim {
             None
         } else {
-            Some(nn::linear(vs / "to_out", inner_dim, dim, Default::default()))
+            Some(nn::linear(
+                vs / "to_out",
+                inner_dim,
+                dim,
+                Default::default(),
+            ))
         };
 
         Self {
@@ -167,7 +172,14 @@ impl Transformer {
         let layers = (0..depth)
             .map(|index| {
                 let name = format!("layer_{index}");
-                TransformerLayer::new(&(vs / name.as_str()), dim, heads, dim_head, mlp_dim, dropout)
+                TransformerLayer::new(
+                    &(vs / name.as_str()),
+                    dim,
+                    heads,
+                    dim_head,
+                    mlp_dim,
+                    dropout,
+                )
             })
             .collect();
         let norm = nn::layer_norm(vs / "norm", vec![dim], Default::default());
