@@ -1,6 +1,7 @@
 pub mod simple_vit;
 pub mod simple_vit_1d;
 pub mod simple_vit_3d;
+pub mod simple_vit_with_register_tokens;
 pub mod vit;
 pub mod vit_1d;
 pub mod vit_3d;
@@ -9,6 +10,7 @@ pub mod vit_with_decorr;
 pub use simple_vit::SimpleViT;
 pub use simple_vit_1d::SimpleViT1D;
 pub use simple_vit_3d::SimpleViT3D;
+pub use simple_vit_with_register_tokens::SimpleViTWithRegisterTokens;
 pub use vit::ViT;
 pub use vit_1d::ViT1D;
 pub use vit_3d::ViT3D;
