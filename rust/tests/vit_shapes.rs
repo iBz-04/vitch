@@ -1,10 +1,10 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
-    DeepViT, ImageSize, LocalViT, ParallelViT, Pool, SimpleViT, SimpleViT1D, SimpleViT3D,
-    SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D,
-    ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTWithDecorr, ViTWithDecorrConfig,
-    ViTWithPatchDropout,
+    DeepViT, ImageSize, LocalViT, MAE, MAEConfig, ParallelViT, Pool, SimMIM, SimMIMConfig,
+    SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout, SimpleViTWithQkNorm,
+    SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig,
+    ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
 };
 
 #[test]
@@ -377,6 +377,62 @@ fn local_vit_outputs_logits_shape() {
     let logits = model.forward_t(&img, false);
 
     assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn mae_outputs_scalar_loss() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = MAE::new(
+        &vs.root(),
+        MAEConfig {
+            encoder: ViTConfig {
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(8),
+                num_classes: 0,
+                dim: 128,
+                depth: 2,
+                heads: 4,
+                dim_head: 32,
+                mlp_dim: 256,
+                ..Default::default()
+            },
+            decoder_dim: 64,
+            masking_ratio: 0.5,
+            decoder_depth: 1,
+            decoder_heads: 4,
+            decoder_dim_head: 16,
+        },
+    );
+    let img = Tensor::randn([2, 3, 32, 32], (Kind::Float, Device::Cpu));
+    let loss = model.forward_t(&img, true);
+
+    assert_eq!(loss.size(), [] as [i64; 0]);
+}
+
+#[test]
+fn simmim_outputs_scalar_loss() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = SimMIM::new(
+        &vs.root(),
+        SimMIMConfig {
+            encoder: ViTConfig {
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(8),
+                num_classes: 0,
+                dim: 128,
+                depth: 2,
+                heads: 4,
+                dim_head: 32,
+                mlp_dim: 256,
+                ..Default::default()
+            },
+            masking_ratio: 0.5,
+        },
+    );
+    let img = Tensor::randn([2, 3, 32, 32], (Kind::Float, Device::Cpu));
+    let loss = model.forward_t(&img, true);
+
+    assert_eq!(loss.size(), [] as [i64; 0]);
 }
 
 #[test]

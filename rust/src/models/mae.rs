@@ -129,7 +129,10 @@ impl nn::ModuleT for MAE {
         let num_patches = patches.size()[1];
         let tokens = self.patch_embedding.forward_patches(&patches);
         let pos_embedding = match self.pool {
-            Pool::Cls => self.encoder_pos_embedding.i(1..num_patches + 1).unsqueeze(0),
+            Pool::Cls => self
+                .encoder_pos_embedding
+                .i(1..num_patches + 1)
+                .unsqueeze(0),
             Pool::Mean => self.encoder_pos_embedding.unsqueeze(0),
         };
         let tokens = tokens + pos_embedding;
@@ -144,7 +147,11 @@ impl nn::ModuleT for MAE {
         let unmasked_decoder_tokens =
             decoder_tokens + mask.unmasked_indices.apply(&self.decoder_pos_embedding);
         let num_masked = mask.masked_indices.size()[1];
-        let mask_tokens = self.mask_token.unsqueeze(0).unsqueeze(0).repeat([batch, num_masked, 1])
+        let mask_tokens = self
+            .mask_token
+            .unsqueeze(0)
+            .unsqueeze(0)
+            .repeat([batch, num_masked, 1])
             + mask.masked_indices.apply(&self.decoder_pos_embedding);
         let decoder_dim = mask_tokens.size()[2];
         let decoder_tokens = scatter_tokens(

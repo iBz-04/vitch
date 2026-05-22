@@ -9,10 +9,11 @@ pub mod tensor;
 pub mod token;
 
 pub use config::{
-    ImageSize, MAEConfig, Pool, ViT1DConfig, ViT3DConfig, ViTConfig, ViTWithDecorrConfig,
+    ImageSize, MAEConfig, Pool, SimMIMConfig, ViT1DConfig, ViT3DConfig, ViTConfig,
+    ViTWithDecorrConfig,
 };
 pub use models::{
-    DeepViT, LocalViT, ParallelViT, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
-    SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D, ViT3D, ViTWithDecorr,
-    ViTWithPatchDropout,
+    DeepViT, LocalViT, MAE, ParallelViT, SimMIM, SimpleViT, SimpleViT1D, SimpleViT3D,
+    SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D, ViT3D,
+    ViTWithDecorr, ViTWithPatchDropout,
 };

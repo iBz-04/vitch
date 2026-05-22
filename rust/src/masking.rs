@@ -13,7 +13,10 @@ impl RandomMask {
             "masking ratio must be between 0 and 1"
         );
         let num_masked = 1.max((tokens as f64 * masking_ratio) as i64);
-        assert!(num_masked < tokens, "at least one token must remain unmasked");
+        assert!(
+            num_masked < tokens,
+            "at least one token must remain unmasked"
+        );
         let indices = Tensor::rand([batch, tokens], (Kind::Float, device)).argsort(-1, false);
         let masked_indices = indices.narrow(1, 0, num_masked);
         let unmasked_indices = indices.narrow(1, num_masked, tokens - num_masked);
@@ -32,7 +35,13 @@ pub fn gather_tokens(tokens: &Tensor, indices: &Tensor) -> Tensor {
     tokens.gather(1, &indices, false)
 }
 
-pub fn scatter_tokens(batch: i64, tokens: i64, dim: i64, indices: &Tensor, values: &Tensor) -> Tensor {
+pub fn scatter_tokens(
+    batch: i64,
+    tokens: i64,
+    dim: i64,
+    indices: &Tensor,
+    values: &Tensor,
+) -> Tensor {
     let target = Tensor::zeros([batch, tokens, dim], (values.kind(), values.device()));
     let indices = indices.unsqueeze(-1).repeat([1, 1, dim]);
 

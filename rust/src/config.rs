@@ -179,3 +179,18 @@ impl Default for MAEConfig {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct SimMIMConfig {
+    pub encoder: ViTConfig,
+    pub masking_ratio: f64,
+}
+
+impl Default for SimMIMConfig {
+    fn default() -> Self {
+        Self {
+            encoder: ViTConfig::default(),
+            masking_ratio: 0.5,
+        }
+    }
+}
