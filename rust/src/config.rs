@@ -211,7 +211,6 @@ pub struct CCTConfig {
     pub pooling_stride: i64,
     pub pooling_padding: i64,
     pub dropout: f64,
-    pub attention_dropout: f64,
     pub seq_pool: bool,
 }
 
@@ -232,7 +231,6 @@ impl Default for CCTConfig {
             pooling_stride: 2,
             pooling_padding: 1,
             dropout: 0.0,
-            attention_dropout: 0.1,
             seq_pool: true,
         }
     }

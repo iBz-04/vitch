@@ -187,10 +187,9 @@ impl nn::ModuleT for CCT {
         xs = (xs + self.pos_embedding.i((.., 0..tokens, ..))).dropout(self.dropout, train);
         let xs = self.transformer.forward_t(&xs, train).apply(&self.norm);
         let pooled = if self.seq_pool {
-            let attention_pool = self
-                .attention_pool
-                .as_ref()
-                .expect("sequence pooling head is required");
+            let Some(attention_pool) = &self.attention_pool else {
+                unreachable!("sequence pooling head is required");
+            };
             let weights = xs
                 .apply(attention_pool)
                 .squeeze_dim(-1)
