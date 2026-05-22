@@ -22,8 +22,8 @@ impl NaViT {
         assert!(!images.is_empty(), "at least one image is required");
         let stacked = Tensor::stack(images, 0);
         let batch = stacked.size()[0];
-        let tokens = self.model.forward_t_with_mask(&stacked, None, train);
-        let mask = Tensor::ones([batch, tokens.size()[1]], (Kind::Bool, stacked.device()));
+        let (grid_h, grid_w) = self.model.patch_grid_for(&stacked);
+        let mask = Tensor::ones([batch, grid_h * grid_w], (Kind::Bool, stacked.device()));
 
         self.model.forward_t_with_mask(&stacked, Some(&mask), train)
     }

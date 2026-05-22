@@ -9,11 +9,17 @@ pub mod tensor;
 pub mod token;
 
 pub use config::{
-    CCTConfig, CvTConfig, CvTStageConfig, ImageSize, LeViTConfig, MAEConfig, PiTConfig, Pool,
-    SimMIMConfig, ViT1DConfig, ViT3DConfig, ViTConfig, ViTWithDecorrConfig,
+    ATSConfig, AcceptVideoWrapperConfig, CCTConfig, CaiTConfig, CompactVisionConfig,
+    CrossFormerConfig, CvTConfig, CvTStageConfig, DINOConfig, DistillConfig, ImageSize,
+    LeViTConfig, MAEConfig, MPPConfig, MP3Config, MaxViTConfig, MobileViTConfig, NaViTConfig,
+    NaViTNestedTensorConfig, NesTConfig, PiTConfig, Pool, RegionViTConfig, SepViTConfig,
+    SimMIMConfig, TwinsSVTConfig, VAATConfig, VATConfig, ViT1DConfig, ViT3DConfig, ViTConfig,
+    ViTWithDecorrConfig, ViViTConfig, XCiTConfig,
 };
 pub use models::{
-    CCT, CvT, DeepViT, LeViT, LocalViT, MAE, ParallelViT, PiT, SimMIM, SimpleViT, SimpleViT1D,
-    SimpleViT3D, SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT,
-    ViT1D, ViT3D, ViTForSmallDataset, ViTWithDecorr, ViTWithPatchDropout,
+    ATS, AcceptVideoWrapper, CCT, CaiT, CrossFormer, CvT, DINO, DeepViT, Distill, LeViT,
+    LocalViT, MAE, MPP, MP3, MaxViT, MobileViT, NaViT, NaViTNestedTensor, NesT, ParallelViT, PiT,
+    RegionViT, SepViT, SimMIM, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
+    SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, TwinsSVT, VAAT, VAT, ViT, ViT1D, ViT3D,
+    ViTForSmallDataset, ViTWithDecorr, ViTWithPatchDropout, ViViT, XCiT,
 };
