@@ -6,7 +6,84 @@ edition = "2024"
 [features]
 default = ["doc-only"]
 doc-only = ["tch/doc-only"]
-download-libtorch = ["tch/download-libtorch"]
+target-checks = []
+runtime = ["target-checks"]
+download-libtorch = ["runtime", "tch/download-libtorch"]
+
+[lib]
+test = false
+doctest = false
+
+[[test]]
+name = "vit_shapes"
+path = "tests/vit_shapes.rs"
+required-features = ["target-checks"]
+
+[[example]]
+name = "vit_inference"
+path = "examples/vit_inference.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "cct_inference"
+path = "examples/cct_inference.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "cvt_inference"
+path = "examples/cvt_inference.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "pit_inference"
+path = "examples/pit_inference.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "levit_inference"
+path = "examples/levit_inference.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "vit_1d"
+path = "examples/vit_1d.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "vit_3d"
+path = "examples/vit_3d.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "vit_for_small_dataset"
+path = "examples/vit_for_small_dataset.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "decorr_smoke_train"
+path = "examples/decorr_smoke_train.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "mae_smoke_train"
+path = "examples/mae_smoke_train.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "simmim_smoke_train"
+path = "examples/simmim_smoke_train.rs"
+required-features = ["target-checks"]
+test = false
 
 [dependencies]
 tch = "0.24.0"
