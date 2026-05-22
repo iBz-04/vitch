@@ -1,4 +1,4 @@
-use tch::{Kind, Tensor, nn};
+use tch::{Kind, Tensor, nn, nn::ModuleT};
 
 use crate::config::LeViTConfig;
 
@@ -31,14 +31,14 @@ impl ConvBn {
 }
 
 impl nn::ModuleT for ConvBn {
-    fn forward_t(&self, xs: &Tensor, train: bool) -> Tensor {
+    fn forward_t(&self, xs: &Tensor, _train: bool) -> Tensor {
         xs.apply(&self.conv).apply_t(&self.bn, train)
     }
 }
 
 #[derive(Debug)]
 struct ConvEmbedding {
-    layers: Vec<ConvBn>,
+    layers: Vec<nn::Conv2D>,
 }
 
 impl ConvEmbedding {
@@ -49,7 +49,17 @@ impl ConvEmbedding {
             .enumerate()
             .map(|(index, (dim_in, dim_out))| {
                 let name = format!("layer_{index}");
-                ConvBn::new(&(vs / name.as_str()), *dim_in, *dim_out, 3, 2)
+                nn::conv2d(
+                    vs / name.as_str(),
+                    *dim_in,
+                    *dim_out,
+                    3,
+                    nn::ConvConfig {
+                        stride: 2,
+                        padding: 1,
+                        ..Default::default()
+                    },
+                )
             })
             .collect();
 
@@ -62,7 +72,7 @@ impl nn::ModuleT for ConvEmbedding {
         let mut xs = xs.shallow_clone();
 
         for layer in &self.layers {
-            xs = layer.forward_t(&xs, train);
+            xs = xs.apply(layer);
         }
 
         xs
@@ -106,7 +116,6 @@ struct ConvAttention2D {
     to_q: ConvBn,
     to_k: ConvBn,
     to_v: ConvBn,
-    out_activation: bool,
     to_out: nn::Conv2D,
     out_bn: nn::BatchNorm,
     pos_bias: Tensor,
@@ -169,7 +178,6 @@ impl ConvAttention2D {
             to_q,
             to_k,
             to_v,
-            out_activation: true,
             to_out,
             out_bn,
             pos_bias,
@@ -217,13 +225,8 @@ impl nn::ModuleT for ConvAttention2D {
             q_height,
             q_width,
         ]);
-        let out = if self.out_activation {
-            out.gelu("none")
-        } else {
-            out
-        };
-
-        out.apply(&self.to_out)
+        out.gelu("none")
+            .apply(&self.to_out)
             .apply_t(&self.out_bn, train)
             .dropout(self.dropout, train)
     }
