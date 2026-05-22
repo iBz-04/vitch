@@ -1,6 +1,9 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
-use vit_tch::{ImageSize, Pool, SimpleViT, ViT, ViTConfig, ViTWithDecorr, ViTWithDecorrConfig};
+use vit_tch::{
+    ImageSize, Pool, SimpleViT, SimpleViT1D, SimpleViT3D, ViT, ViT1D, ViT1DConfig, ViT3D,
+    ViT3DConfig, ViTConfig, ViTWithDecorr, ViTWithDecorrConfig,
+};
 
 #[test]
 fn vit_outputs_logits_shape() {
@@ -118,6 +121,98 @@ fn vit_with_decorr_outputs_logits_and_aux_loss() {
 
     assert_eq!(logits.size(), [2, 100]);
     assert_eq!(aux_loss.size(), [] as [i64; 0]);
+}
+
+#[test]
+fn vit_1d_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = ViT1D::new(
+        &vs.root(),
+        ViT1DConfig {
+            seq_len: 256,
+            patch_size: 16,
+            num_classes: 1000,
+            dim: 256,
+            depth: 2,
+            heads: 8,
+            mlp_dim: 512,
+            ..Default::default()
+        },
+    );
+    let series = Tensor::randn([4, 3, 256], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&series, false);
+
+    assert_eq!(logits.size(), [4, 1000]);
+}
+
+#[test]
+fn simple_vit_1d_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = SimpleViT1D::new(
+        &vs.root(),
+        ViT1DConfig {
+            seq_len: 256,
+            patch_size: 16,
+            num_classes: 1000,
+            dim: 256,
+            depth: 2,
+            heads: 8,
+            mlp_dim: 512,
+            ..Default::default()
+        },
+    );
+    let series = Tensor::randn([4, 3, 256], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&series, false);
+
+    assert_eq!(logits.size(), [4, 1000]);
+}
+
+#[test]
+fn vit_3d_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = ViT3D::new(
+        &vs.root(),
+        ViT3DConfig {
+            image_size: ImageSize::square(64),
+            image_patch_size: ImageSize::square(16),
+            frames: 8,
+            frame_patch_size: 2,
+            num_classes: 1000,
+            dim: 256,
+            depth: 2,
+            heads: 8,
+            mlp_dim: 512,
+            ..Default::default()
+        },
+    );
+    let video = Tensor::randn([2, 3, 8, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&video, false);
+
+    assert_eq!(logits.size(), [2, 1000]);
+}
+
+#[test]
+fn simple_vit_3d_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = SimpleViT3D::new(
+        &vs.root(),
+        ViT3DConfig {
+            image_size: ImageSize::square(64),
+            image_patch_size: ImageSize::square(16),
+            frames: 8,
+            frame_patch_size: 2,
+            num_classes: 1000,
+            dim: 256,
+            depth: 2,
+            heads: 8,
+            mlp_dim: 512,
+            ..Default::default()
+        },
+    );
+    let video = Tensor::randn([2, 3, 8, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&video, false);
+
+    assert_eq!(logits.size(), [2, 1000]);
 }
 
 #[test]
