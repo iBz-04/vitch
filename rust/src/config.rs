@@ -400,21 +400,201 @@ impl Default for CompactVisionConfig {
     }
 }
 
-macro_rules! compact_config_alias {
-    ($name:ident) => {
-        pub type $name = CompactVisionConfig;
-    };
+#[derive(Debug, Clone)]
+pub struct NaViTConfig {
+    pub vision: CompactVisionConfig,
+    pub token_dropout_prob: f64,
 }
 
-compact_config_alias!(SepViTConfig);
-compact_config_alias!(CrossFormerConfig);
-compact_config_alias!(RegionViTConfig);
-compact_config_alias!(NaViTConfig);
-compact_config_alias!(NaViTNestedTensorConfig);
-compact_config_alias!(ATSConfig);
-compact_config_alias!(MPPConfig);
-compact_config_alias!(MP3Config);
-compact_config_alias!(DINOConfig);
+impl Default for NaViTConfig {
+    fn default() -> Self {
+        Self {
+            vision: CompactVisionConfig::default(),
+            token_dropout_prob: 0.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct NaViTNestedTensorConfig {
+    pub navit: NaViTConfig,
+}
+
+impl Default for NaViTNestedTensorConfig {
+    fn default() -> Self {
+        Self {
+            navit: NaViTConfig::default(),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ATSConfig {
+    pub vision: CompactVisionConfig,
+    pub keep_ratio: f64,
+}
+
+impl Default for ATSConfig {
+    fn default() -> Self {
+        Self {
+            vision: CompactVisionConfig::default(),
+            keep_ratio: 0.75,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct MPPConfig {
+    pub encoder: CompactVisionConfig,
+    pub reconstruction_dim: i64,
+}
+
+impl Default for MPPConfig {
+    fn default() -> Self {
+        let encoder = CompactVisionConfig::default();
+        Self {
+            reconstruction_dim: encoder.num_classes,
+            encoder,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct MP3Config {
+    pub encoder: CompactVisionConfig,
+    pub prediction_dim: i64,
+    pub masking_ratio: f64,
+}
+
+impl Default for MP3Config {
+    fn default() -> Self {
+        let encoder = CompactVisionConfig::default();
+        Self {
+            prediction_dim: encoder.num_classes,
+            encoder,
+            masking_ratio: 0.5,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DINOConfig {
+    pub student: CompactVisionConfig,
+    pub projection_dim: i64,
+    pub student_temp: f64,
+    pub teacher_temp: f64,
+}
+
+impl Default for DINOConfig {
+    fn default() -> Self {
+        let student = CompactVisionConfig::default();
+        Self {
+            projection_dim: student.num_classes,
+            student,
+            student_temp: 0.9,
+            teacher_temp: 0.04,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CrossFormerConfig {
+    pub dim: Vec<i64>,
+    pub depth: Vec<usize>,
+    pub global_window_size: Vec<i64>,
+    pub local_window_size: Vec<i64>,
+    pub cross_embed_kernel_sizes: Vec<Vec<i64>>,
+    pub cross_embed_strides: Vec<i64>,
+    pub num_classes: i64,
+    pub dim_head: i64,
+    pub ff_mult: i64,
+    pub attn_dropout: f64,
+    pub ff_dropout: f64,
+    pub channels: i64,
+}
+
+impl Default for CrossFormerConfig {
+    fn default() -> Self {
+        Self {
+            dim: vec![64, 128, 256, 512],
+            depth: vec![2, 2, 8, 2],
+            global_window_size: vec![8, 4, 2, 1],
+            local_window_size: vec![7, 7, 7, 7],
+            cross_embed_kernel_sizes: vec![vec![4, 8, 16, 32], vec![2, 4], vec![2, 4], vec![2, 4]],
+            cross_embed_strides: vec![4, 2, 2, 2],
+            num_classes: 1000,
+            dim_head: 32,
+            ff_mult: 4,
+            attn_dropout: 0.0,
+            ff_dropout: 0.0,
+            channels: 3,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct RegionViTConfig {
+    pub dim: Vec<i64>,
+    pub depth: Vec<usize>,
+    pub window_size: i64,
+    pub num_classes: i64,
+    pub tokenize_local_3_conv: bool,
+    pub local_patch_size: i64,
+    pub use_peg: bool,
+    pub heads: i64,
+    pub dim_head: i64,
+    pub attn_dropout: f64,
+    pub ff_dropout: f64,
+    pub channels: i64,
+}
+
+impl Default for RegionViTConfig {
+    fn default() -> Self {
+        Self {
+            dim: vec![64, 128, 256, 512],
+            depth: vec![2, 2, 8, 2],
+            window_size: 7,
+            num_classes: 1000,
+            tokenize_local_3_conv: false,
+            local_patch_size: 4,
+            use_peg: false,
+            heads: 4,
+            dim_head: 32,
+            attn_dropout: 0.0,
+            ff_dropout: 0.0,
+            channels: 3,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct SepViTConfig {
+    pub num_classes: i64,
+    pub dim: i64,
+    pub depth: Vec<usize>,
+    pub heads: Vec<i64>,
+    pub window_size: Vec<i64>,
+    pub dim_head: i64,
+    pub ff_mult: i64,
+    pub channels: i64,
+    pub dropout: f64,
+}
+
+impl Default for SepViTConfig {
+    fn default() -> Self {
+        Self {
+            num_classes: 1000,
+            dim: 64,
+            depth: vec![2, 2, 6, 2],
+            heads: vec![8, 8, 8, 8],
+            window_size: vec![7, 7, 7, 7],
+            dim_head: 32,
+            ff_mult: 4,
+            channels: 3,
+            dropout: 0.0,
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct XCiTConfig {
@@ -714,6 +894,8 @@ impl Default for ViViTConfig {
 pub struct AcceptVideoWrapperConfig {
     pub image_model: CompactVisionConfig,
     pub frames: i64,
+    pub add_time_pos_emb: bool,
+    pub proj_embed_to_dim: Option<i64>,
 }
 
 impl Default for AcceptVideoWrapperConfig {
@@ -721,6 +903,8 @@ impl Default for AcceptVideoWrapperConfig {
         Self {
             image_model: CompactVisionConfig::default(),
             frames: 8,
+            add_time_pos_emb: false,
+            proj_embed_to_dim: None,
         }
     }
 }

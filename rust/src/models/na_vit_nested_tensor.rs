@@ -10,7 +10,7 @@ pub struct NaViTNestedTensor {
 impl NaViTNestedTensor {
     pub fn new(vs: &nn::Path, config: NaViTNestedTensorConfig) -> Self {
         Self {
-            model: NaViT::new(&(vs / "model"), config),
+            model: NaViT::new(&(vs / "model"), config.navit),
         }
     }
 

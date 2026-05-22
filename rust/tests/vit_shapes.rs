@@ -639,7 +639,14 @@ fn attention_family_models_output_logits_shape() {
         SepViT::new(
             &vs.root(),
             SepViTConfig {
-                ..compact_test_config(10)
+                num_classes: 10,
+                dim: 16,
+                depth: vec![1],
+                heads: vec![2],
+                window_size: vec![8],
+                dim_head: 8,
+                ff_mult: 2,
+                ..Default::default()
             },
         )
         .forward_t(&img, false)
@@ -658,7 +665,15 @@ fn hierarchical_attention_family_models_output_logits_shape() {
         CrossFormer::new(
             &vs.root(),
             CrossFormerConfig {
-                ..compact_test_config(10)
+                dim: vec![16],
+                depth: vec![1],
+                global_window_size: vec![8],
+                local_window_size: vec![8],
+                cross_embed_kernel_sizes: vec![vec![4, 8]],
+                cross_embed_strides: vec![4],
+                num_classes: 10,
+                dim_head: 8,
+                ..Default::default()
             },
         )
         .forward_t(&img, false)
@@ -714,7 +729,14 @@ fn hierarchical_attention_family_models_output_logits_shape() {
         RegionViT::new(
             &vs.root(),
             RegionViTConfig {
-                ..compact_test_config(10)
+                dim: vec![16],
+                depth: vec![1],
+                window_size: 8,
+                num_classes: 10,
+                local_patch_size: 4,
+                heads: 2,
+                dim_head: 8,
+                ..Default::default()
             },
         )
         .forward_t(&img, false)
@@ -732,7 +754,8 @@ fn dynamic_and_nested_models_output_logits_shape() {
     let navit = NaViT::new(
         &vs.root(),
         NaViTConfig {
-            ..compact_test_config(10)
+            vision: compact_test_config(10),
+            token_dropout_prob: 0.0,
         },
     );
     assert_eq!(
@@ -744,7 +767,10 @@ fn dynamic_and_nested_models_output_logits_shape() {
     let nested = NaViTNestedTensor::new(
         &vs.root(),
         NaViTNestedTensorConfig {
-            ..compact_test_config(10)
+            navit: NaViTConfig {
+                vision: compact_test_config(10),
+                token_dropout_prob: 0.0,
+            },
         },
     );
     assert_eq!(
@@ -758,7 +784,8 @@ fn dynamic_and_nested_models_output_logits_shape() {
     let ats = ATS::new(
         &vs.root(),
         ATSConfig {
-            ..compact_test_config(10)
+            vision: compact_test_config(10),
+            keep_ratio: 0.75,
         },
     );
     assert_eq!(
@@ -776,7 +803,8 @@ fn training_wrappers_output_scalar_losses() {
     let mpp = MPP::new(
         &vs.root(),
         MPPConfig {
-            ..compact_test_config(10)
+            encoder: compact_test_config(10),
+            reconstruction_dim: 10,
         },
     );
     assert_eq!(
@@ -788,7 +816,9 @@ fn training_wrappers_output_scalar_losses() {
     let mp3 = MP3::new(
         &vs.root(),
         MP3Config {
-            ..compact_test_config(10)
+            encoder: compact_test_config(10),
+            prediction_dim: 10,
+            masking_ratio: 0.5,
         },
     );
     assert_eq!(
@@ -800,7 +830,10 @@ fn training_wrappers_output_scalar_losses() {
     let dino = DINO::new(
         &vs.root(),
         DINOConfig {
-            ..compact_test_config(10)
+            student: compact_test_config(10),
+            projection_dim: 10,
+            student_temp: 0.9,
+            teacher_temp: 0.04,
         },
     );
     assert_eq!(
@@ -853,6 +886,8 @@ fn video_audio_multimodal_models_output_logits_shape() {
         AcceptVideoWrapperConfig {
             image_model: compact_test_config(10),
             frames: 4,
+            add_time_pos_emb: true,
+            proj_embed_to_dim: Some(10),
         },
     );
     assert_eq!(wrapper.forward_t(&video, false).size(), [2, 10]);

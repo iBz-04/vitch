@@ -10,9 +10,14 @@ pub struct ATS {
 
 impl ATS {
     pub fn new(vs: &nn::Path, config: ATSConfig) -> Self {
+        assert!(
+            config.keep_ratio > 0.0 && config.keep_ratio <= 1.0,
+            "keep ratio must be in (0, 1]"
+        );
+        let keep_ratio = config.keep_ratio;
         Self {
-            model: MaskedImageTransformer::new(&(vs / "model"), config),
-            keep_ratio: 0.75,
+            model: MaskedImageTransformer::new(&(vs / "model"), config.vision),
+            keep_ratio,
         }
     }
 

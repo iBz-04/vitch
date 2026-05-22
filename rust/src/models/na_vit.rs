@@ -9,8 +9,12 @@ pub struct NaViT {
 
 impl NaViT {
     pub fn new(vs: &nn::Path, config: NaViTConfig) -> Self {
+        assert!(
+            config.token_dropout_prob >= 0.0 && config.token_dropout_prob < 1.0,
+            "token dropout probability must be in [0, 1)"
+        );
         Self {
-            model: MaskedImageTransformer::new(&(vs / "model"), config),
+            model: MaskedImageTransformer::new(&(vs / "model"), config.vision),
         }
     }
 
