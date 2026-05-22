@@ -1,6 +1,5 @@
 # Rust build outputs
 target/
-rust/target/
 
 # Editor and local environment files
 .env
