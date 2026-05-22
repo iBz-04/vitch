@@ -596,7 +596,16 @@ fn attention_family_models_output_logits_shape() {
         XCiT::new(
             &vs.root(),
             XCiTConfig {
-                ..compact_test_config(10)
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(8),
+                num_classes: 10,
+                dim: 64,
+                depth: 1,
+                cls_depth: 1,
+                heads: 2,
+                dim_head: 32,
+                mlp_dim: 128,
+                ..Default::default()
             },
         )
         .forward_t(&img, false)
@@ -609,7 +618,15 @@ fn attention_family_models_output_logits_shape() {
         NesT::new(
             &vs.root(),
             NesTConfig {
-                ..compact_test_config(10)
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(4),
+                num_classes: 10,
+                dim: 32,
+                heads: 2,
+                num_hierarchies: 2,
+                block_repeats: vec![1, 1],
+                mlp_mult: 2,
+                ..Default::default()
             },
         )
         .forward_t(&img, false)
