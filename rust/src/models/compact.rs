@@ -195,6 +195,16 @@ impl MaskedImageTransformer {
         }
     }
 
+    pub(crate) fn patch_grid_for(&self, xs: &Tensor) -> (i64, i64) {
+        let size = xs.size();
+        assert_eq!(
+            size.len(),
+            4,
+            "expected image tensor with shape [batch, channels, height, width]"
+        );
+        (size[2] / self.patch_height, size[3] / self.patch_width)
+    }
+
     pub(crate) fn forward_t_with_mask(
         &self,
         xs: &Tensor,
