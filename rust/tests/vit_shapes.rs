@@ -436,6 +436,62 @@ fn simmim_outputs_scalar_loss() {
 }
 
 #[test]
+#[should_panic(expected = "masking ratio must be between 0 and 1")]
+fn mae_rejects_zero_masking_ratio() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = MAE::new(
+        &vs.root(),
+        MAEConfig {
+            encoder: ViTConfig {
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(8),
+                num_classes: 0,
+                dim: 128,
+                depth: 2,
+                heads: 4,
+                dim_head: 32,
+                mlp_dim: 256,
+                ..Default::default()
+            },
+            decoder_dim: 64,
+            masking_ratio: 0.0,
+            decoder_depth: 1,
+            decoder_heads: 4,
+            decoder_dim_head: 16,
+        },
+    );
+    let img = Tensor::randn([2, 3, 32, 32], (Kind::Float, Device::Cpu));
+
+    let _ = model.forward_t(&img, true);
+}
+
+#[test]
+#[should_panic(expected = "masking ratio must be between 0 and 1")]
+fn simmim_rejects_full_masking_ratio() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = SimMIM::new(
+        &vs.root(),
+        SimMIMConfig {
+            encoder: ViTConfig {
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(8),
+                num_classes: 0,
+                dim: 128,
+                depth: 2,
+                heads: 4,
+                dim_head: 32,
+                mlp_dim: 256,
+                ..Default::default()
+            },
+            masking_ratio: 1.0,
+        },
+    );
+    let img = Tensor::randn([2, 3, 32, 32], (Kind::Float, Device::Cpu));
+
+    let _ = model.forward_t(&img, true);
+}
+
+#[test]
 #[should_panic(expected = "image dimensions must be divisible by patch size")]
 fn vit_rejects_invalid_patch_size() {
     let vs = nn::VarStore::new(Device::Cpu);
