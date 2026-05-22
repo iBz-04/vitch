@@ -47,17 +47,35 @@ impl MaxViTAttentionBlock {
         let grid_h = height / self.window_size;
         let grid_w = width / self.window_size;
         let tokens = if self.grid {
-            xs.view([batch, dim, self.window_size, grid_h, self.window_size, grid_w])
-                .permute([0, 3, 5, 2, 4, 1])
-                .contiguous()
+            xs.view([
+                batch,
+                dim,
+                self.window_size,
+                grid_h,
+                self.window_size,
+                grid_w,
+            ])
+            .permute([0, 3, 5, 2, 4, 1])
+            .contiguous()
         } else {
-            xs.view([batch, dim, grid_h, self.window_size, grid_w, self.window_size])
-                .permute([0, 2, 4, 3, 5, 1])
-                .contiguous()
+            xs.view([
+                batch,
+                dim,
+                grid_h,
+                self.window_size,
+                grid_w,
+                self.window_size,
+            ])
+            .permute([0, 2, 4, 3, 5, 1])
+            .contiguous()
         };
 
         (
-            tokens.view([batch * grid_h * grid_w, self.window_size * self.window_size, dim]),
+            tokens.view([
+                batch * grid_h * grid_w,
+                self.window_size * self.window_size,
+                dim,
+            ]),
             batch,
             height,
             width,
@@ -65,7 +83,14 @@ impl MaxViTAttentionBlock {
         )
     }
 
-    fn tokens_to_blocks(&self, tokens: &Tensor, batch: i64, height: i64, width: i64, dim: i64) -> Tensor {
+    fn tokens_to_blocks(
+        &self,
+        tokens: &Tensor,
+        batch: i64,
+        height: i64,
+        width: i64,
+        dim: i64,
+    ) -> Tensor {
         let grid_h = height / self.window_size;
         let grid_w = width / self.window_size;
         let tokens = tokens.view([
