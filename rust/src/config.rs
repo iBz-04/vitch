@@ -411,7 +411,6 @@ compact_config_alias!(XCiTConfig);
 compact_config_alias!(NesTConfig);
 compact_config_alias!(SepViTConfig);
 compact_config_alias!(CrossFormerConfig);
-compact_config_alias!(TwinsSVTConfig);
 compact_config_alias!(RegionViTConfig);
 compact_config_alias!(NaViTConfig);
 compact_config_alias!(NaViTNestedTensorConfig);
@@ -419,6 +418,77 @@ compact_config_alias!(ATSConfig);
 compact_config_alias!(MPPConfig);
 compact_config_alias!(MP3Config);
 compact_config_alias!(DINOConfig);
+
+#[derive(Debug, Clone, Copy)]
+pub struct TwinsSVTStageConfig {
+    pub emb_dim: i64,
+    pub patch_size: i64,
+    pub local_patch_size: i64,
+    pub global_k: i64,
+    pub depth: usize,
+}
+
+impl TwinsSVTStageConfig {
+    pub fn new(
+        emb_dim: i64,
+        patch_size: i64,
+        local_patch_size: i64,
+        global_k: i64,
+        depth: usize,
+    ) -> Self {
+        Self {
+            emb_dim,
+            patch_size,
+            local_patch_size,
+            global_k,
+            depth,
+        }
+    }
+}
+
+impl Default for TwinsSVTStageConfig {
+    fn default() -> Self {
+        Self {
+            emb_dim: 64,
+            patch_size: 4,
+            local_patch_size: 7,
+            global_k: 7,
+            depth: 1,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct TwinsSVTConfig {
+    pub num_classes: i64,
+    pub stages: [TwinsSVTStageConfig; 4],
+    pub peg_kernel_size: i64,
+    pub dropout: f64,
+    pub channels: i64,
+    pub heads: i64,
+    pub dim_head: i64,
+    pub mlp_mult: i64,
+}
+
+impl Default for TwinsSVTConfig {
+    fn default() -> Self {
+        Self {
+            num_classes: 1000,
+            stages: [
+                TwinsSVTStageConfig::new(64, 4, 7, 7, 1),
+                TwinsSVTStageConfig::new(128, 2, 7, 7, 1),
+                TwinsSVTStageConfig::new(256, 2, 7, 7, 5),
+                TwinsSVTStageConfig::new(512, 2, 7, 7, 4),
+            ],
+            peg_kernel_size: 3,
+            dropout: 0.0,
+            channels: 3,
+            heads: 8,
+            dim_head: 64,
+            mlp_mult: 4,
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct MobileViTConfig {

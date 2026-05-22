@@ -13,8 +13,8 @@ pub use config::{
     CrossFormerConfig, CvTConfig, CvTStageConfig, DINOConfig, DistillConfig, ImageSize,
     LeViTConfig, MAEConfig, MP3Config, MPPConfig, MaxViTConfig, MobileViTConfig, NaViTConfig,
     NaViTNestedTensorConfig, NesTConfig, PiTConfig, Pool, RegionViTConfig, SepViTConfig,
-    SimMIMConfig, TwinsSVTConfig, VAATConfig, VATConfig, ViT1DConfig, ViT3DConfig, ViTConfig,
-    ViTWithDecorrConfig, ViViTConfig, XCiTConfig,
+    SimMIMConfig, TwinsSVTConfig, TwinsSVTStageConfig, VAATConfig, VATConfig, ViT1DConfig,
+    ViT3DConfig, ViTConfig, ViTWithDecorrConfig, ViViTConfig, XCiTConfig,
 };
 pub use models::{
     ATS, AcceptVideoWrapper, CCT, CaiT, CrossFormer, CvT, DINO, DeepViT, Distill, LeViT, LocalViT,
