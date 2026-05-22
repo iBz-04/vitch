@@ -4,9 +4,9 @@ Vision Transformer models in Rust, built with [`tch`], the Rust bindings for Lib
 
 This project is a small Rust deep learning crate for ViT-style models. It gives you typed configs, model structs, examples, and shape tests. The main model is `ViT`, and the crate also includes models for images, video, 1D signals, masked training, distillation, compact models, and mobile models.
 
-## Visual References
 
-### Vision Transformer Overview
+
+### Overview
 
 ![Vision Transformer](images/vit.gif)
 
