@@ -1,4 +1,4 @@
-use tch::{IndexOp, Tensor, nn, nn::ModuleT};
+use tch::{IndexOp, Tensor, nn};
 
 use crate::{
     config::ViT1DConfig,
@@ -54,8 +54,12 @@ impl ViT1D {
         assert_sequence_patchable(config.seq_len, config.patch_size);
         let num_patches = config.seq_len / config.patch_size;
         let patch_dim = config.channels * config.patch_size;
-        let patch_embedding =
-            PatchEmbedding1D::new(&(vs / "patch_embedding"), patch_dim, config.dim, config.patch_size);
+        let patch_embedding = PatchEmbedding1D::new(
+            &(vs / "patch_embedding"),
+            patch_dim,
+            config.dim,
+            config.patch_size,
+        );
         let pos_embedding = vs.var(
             "pos_embedding",
             &[1, num_patches + 1, config.dim],

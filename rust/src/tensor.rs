@@ -92,7 +92,12 @@ pub fn patchify_1d(xs: &Tensor, patch_size: i64) -> Tensor {
         .view([batch, tokens, patch_size * channels])
 }
 
-pub fn patchify_3d_flat(xs: &Tensor, frame_patch_size: i64, patch_height: i64, patch_width: i64) -> Tensor {
+pub fn patchify_3d_flat(
+    xs: &Tensor,
+    frame_patch_size: i64,
+    patch_height: i64,
+    patch_width: i64,
+) -> Tensor {
     let patches = patchify_3d_grid(xs, frame_patch_size, patch_height, patch_width);
     let size = patches.size();
     let batch = size[0];
@@ -104,7 +109,12 @@ pub fn patchify_3d_flat(xs: &Tensor, frame_patch_size: i64, patch_height: i64, p
     patches.view([batch, frame_tokens * height_tokens * width_tokens, dim])
 }
 
-pub fn patchify_3d_grid(xs: &Tensor, frame_patch_size: i64, patch_height: i64, patch_width: i64) -> Tensor {
+pub fn patchify_3d_grid(
+    xs: &Tensor,
+    frame_patch_size: i64,
+    patch_height: i64,
+    patch_width: i64,
+) -> Tensor {
     let size = xs.size();
     assert_eq!(
         size.len(),
@@ -116,21 +126,30 @@ pub fn patchify_3d_grid(xs: &Tensor, frame_patch_size: i64, patch_height: i64, p
     let frames = size[2];
     let height = size[3];
     let width = size[4];
-    assert_video_patchable(frames, frame_patch_size, height, width, patch_height, patch_width);
+    assert_video_patchable(
+        frames,
+        frame_patch_size,
+        height,
+        width,
+        patch_height,
+        patch_width,
+    );
     let frame_tokens = frames / frame_patch_size;
     let height_tokens = height / patch_height;
     let width_tokens = width / patch_width;
 
-    xs.view([
-        batch,
-        channels,
-        frame_tokens,
-        frame_patch_size,
-        height_tokens,
-        patch_height,
-        width_tokens,
-        patch_width,
-    ])
+    xs.view(
+        &[
+            batch,
+            channels,
+            frame_tokens,
+            frame_patch_size,
+            height_tokens,
+            patch_height,
+            width_tokens,
+            patch_width,
+        ][..],
+    )
     .permute([0, 2, 4, 6, 3, 5, 7, 1])
     .contiguous()
     .view([

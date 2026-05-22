@@ -1,11 +1,8 @@
-use tch::{Tensor, nn, nn::ModuleT};
+use tch::{Tensor, nn};
 
 use crate::{
-    config::ViT1DConfig,
-    layers::Transformer,
-    models::vit_1d::PatchEmbedding1D,
-    positional::posemb_sincos_1d,
-    tensor::assert_sequence_patchable,
+    config::ViT1DConfig, layers::Transformer, models::vit_1d::PatchEmbedding1D,
+    positional::posemb_sincos_1d, tensor::assert_sequence_patchable,
 };
 
 #[derive(Debug)]
@@ -19,8 +16,12 @@ impl SimpleViT1D {
     pub fn new(vs: &nn::Path, config: ViT1DConfig) -> Self {
         assert_sequence_patchable(config.seq_len, config.patch_size);
         let patch_dim = config.channels * config.patch_size;
-        let patch_embedding =
-            PatchEmbedding1D::new(&(vs / "patch_embedding"), patch_dim, config.dim, config.patch_size);
+        let patch_embedding = PatchEmbedding1D::new(
+            &(vs / "patch_embedding"),
+            patch_dim,
+            config.dim,
+            config.patch_size,
+        );
         let transformer = Transformer::new(
             &(vs / "transformer"),
             config.dim,
