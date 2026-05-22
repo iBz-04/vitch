@@ -235,3 +235,64 @@ impl Default for CCTConfig {
         }
     }
 }
+
+#[derive(Debug, Clone, Copy)]
+pub struct CvTStageConfig {
+    pub embed_dim: i64,
+    pub embed_kernel: i64,
+    pub embed_stride: i64,
+    pub proj_kernel: i64,
+    pub kv_proj_stride: i64,
+    pub heads: i64,
+    pub depth: usize,
+    pub mlp_mult: i64,
+}
+
+impl CvTStageConfig {
+    pub fn new(
+        embed_dim: i64,
+        embed_kernel: i64,
+        embed_stride: i64,
+        proj_kernel: i64,
+        kv_proj_stride: i64,
+        heads: i64,
+        depth: usize,
+        mlp_mult: i64,
+    ) -> Self {
+        Self {
+            embed_dim,
+            embed_kernel,
+            embed_stride,
+            proj_kernel,
+            kv_proj_stride,
+            heads,
+            depth,
+            mlp_mult,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CvTConfig {
+    pub num_classes: i64,
+    pub channels: i64,
+    pub stages: [CvTStageConfig; 3],
+    pub dim_head: i64,
+    pub dropout: f64,
+}
+
+impl Default for CvTConfig {
+    fn default() -> Self {
+        Self {
+            num_classes: 1000,
+            channels: 3,
+            stages: [
+                CvTStageConfig::new(64, 7, 4, 3, 2, 1, 1, 4),
+                CvTStageConfig::new(192, 3, 2, 3, 2, 3, 2, 4),
+                CvTStageConfig::new(384, 3, 2, 3, 2, 6, 10, 4),
+            ],
+            dim_head: 64,
+            dropout: 0.0,
+        }
+    }
+}

@@ -1,10 +1,11 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
-    CCT, CCTConfig, DeepViT, ImageSize, LocalViT, MAE, MAEConfig, ParallelViT, Pool, SimMIM,
-    SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
-    SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig,
-    ViTConfig, ViTForSmallDataset, ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
+    CCT, CCTConfig, CvT, CvTConfig, CvTStageConfig, DeepViT, ImageSize, LocalViT, MAE, MAEConfig,
+    ParallelViT, Pool, SimMIM, SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D,
+    SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D,
+    ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTForSmallDataset, ViTWithDecorr,
+    ViTWithDecorrConfig, ViTWithPatchDropout,
 };
 
 #[test]
@@ -421,6 +422,28 @@ fn vit_for_small_dataset_outputs_logits_shape() {
             heads: 4,
             dim_head: 32,
             mlp_dim: 256,
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn cvt_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = CvT::new(
+        &vs.root(),
+        CvTConfig {
+            num_classes: 10,
+            stages: [
+                CvTStageConfig::new(32, 3, 2, 3, 1, 1, 1, 2),
+                CvTStageConfig::new(64, 3, 2, 3, 1, 2, 1, 2),
+                CvTStageConfig::new(128, 3, 2, 3, 1, 4, 1, 2),
+            ],
+            dim_head: 32,
             ..Default::default()
         },
     );

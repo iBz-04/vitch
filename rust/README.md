@@ -22,6 +22,7 @@ cargo run --no-default-features --features download-libtorch --example vit_infer
 ```bash
 cargo run --example vit_inference
 cargo run --example cct_inference
+cargo run --example cvt_inference
 cargo run --example vit_1d
 cargo run --example vit_3d
 cargo run --example vit_for_small_dataset
