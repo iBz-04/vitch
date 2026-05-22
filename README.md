@@ -1,6 +1,6 @@
 # vit-tch
 
-This repository is being rewritten as a Rust implementation of Vision Transformer models using [`tch`](https://github.com/LaurentMazare/tch-rs), the Rust bindings for LibTorch.
+This repository is being rewritten as a Rust implementation of Vision Transformer models using [`tch`], the Rust bindings for LibTorch.
 
 The Python implementation remains useful as the reference while the Rust crate grows, but new implementation work should happen in `rust/`.
 
@@ -26,6 +26,14 @@ The port should continue in small, reviewable phases:
 5. Avoid large monolithic files and one-off fixes.
 
 High-risk features such as nested tensors, dynamic token routing, flash attention behavior, FFTs, and audio preprocessing should wait until the core crate remains stable across several model families.
+
+## Next Phase Checklist
+
+- Port compact model families one module at a time, starting with variants that reuse current transformer and tensor primitives.
+- Keep configs typed and explicit instead of passing loose option maps.
+- Wire every public model through `config.rs`, `models/mod.rs`, `lib.rs`, tests, and at least one small example when useful.
+- Prefer shared helpers for reusable behavior, but avoid broad abstractions until two or more models need the same logic.
+- Validate with `cargo fmt`, `cargo check --tests --examples`, and focused shape or smoke coverage before moving on.
 
 ## Rust Crate
 

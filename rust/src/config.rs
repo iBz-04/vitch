@@ -194,3 +194,46 @@ impl Default for SimMIMConfig {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct CCTConfig {
+    pub image_size: ImageSize,
+    pub num_classes: i64,
+    pub embedding_dim: i64,
+    pub num_layers: usize,
+    pub num_heads: i64,
+    pub mlp_ratio: i64,
+    pub channels: i64,
+    pub kernel_size: i64,
+    pub stride: i64,
+    pub padding: i64,
+    pub pooling_kernel_size: i64,
+    pub pooling_stride: i64,
+    pub pooling_padding: i64,
+    pub dropout: f64,
+    pub attention_dropout: f64,
+    pub seq_pool: bool,
+}
+
+impl Default for CCTConfig {
+    fn default() -> Self {
+        Self {
+            image_size: ImageSize::square(224),
+            num_classes: 1000,
+            embedding_dim: 256,
+            num_layers: 7,
+            num_heads: 4,
+            mlp_ratio: 2,
+            channels: 3,
+            kernel_size: 7,
+            stride: 2,
+            padding: 3,
+            pooling_kernel_size: 3,
+            pooling_stride: 2,
+            pooling_padding: 1,
+            dropout: 0.0,
+            attention_dropout: 0.1,
+            seq_pool: true,
+        }
+    }
+}

@@ -1,3 +1,4 @@
+pub mod cct;
 pub mod deep_vit;
 pub mod local_vit;
 pub mod mae;
@@ -15,6 +16,7 @@ pub mod vit_3d;
 pub mod vit_with_decorr;
 pub mod vit_with_patch_dropout;
 
+pub use cct::CCT;
 pub use deep_vit::DeepViT;
 pub use local_vit::LocalViT;
 pub use mae::MAE;
