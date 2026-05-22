@@ -1,4 +1,4 @@
-use tch::{Tensor, nn, nn::ModuleT};
+use tch::{Tensor, nn};
 
 use crate::{
     config::ViTConfig,
@@ -69,9 +69,7 @@ impl SimpleViTWithPatchDropout {
 impl nn::ModuleT for SimpleViTWithPatchDropout {
     fn forward_t(&self, xs: &Tensor, train: bool) -> Tensor {
         let tokens = xs.apply(&self.patch_embedding) + self.pos_embedding.unsqueeze(0);
-        let tokens = self
-            .patch_dropout
-            .forward_t(&tokens, train);
+        let tokens = self.patch_dropout.forward_t(&tokens, train);
         let tokens = self.transformer.forward_t(&tokens, train);
         let pooled = tokens.mean_dim(1, false, tokens.kind());
 

@@ -1,4 +1,4 @@
-use tch::{IndexOp, Tensor, nn, nn::ModuleT};
+use tch::{IndexOp, Tensor, nn};
 
 use crate::{
     config::{Pool, ViTConfig},
@@ -15,7 +15,13 @@ pub struct LinearPatchEmbedding {
 }
 
 impl LinearPatchEmbedding {
-    pub fn new(vs: &nn::Path, patch_dim: i64, dim: i64, patch_height: i64, patch_width: i64) -> Self {
+    pub fn new(
+        vs: &nn::Path,
+        patch_dim: i64,
+        dim: i64,
+        patch_height: i64,
+        patch_width: i64,
+    ) -> Self {
         let linear = nn::linear(vs / "linear", patch_dim, dim, Default::default());
 
         Self {
