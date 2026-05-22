@@ -31,7 +31,7 @@ impl ConvBn {
 }
 
 impl nn::ModuleT for ConvBn {
-    fn forward_t(&self, xs: &Tensor, _train: bool) -> Tensor {
+    fn forward_t(&self, xs: &Tensor, train: bool) -> Tensor {
         xs.apply(&self.conv).apply_t(&self.bn, train)
     }
 }
@@ -68,7 +68,7 @@ impl ConvEmbedding {
 }
 
 impl nn::ModuleT for ConvEmbedding {
-    fn forward_t(&self, xs: &Tensor, train: bool) -> Tensor {
+    fn forward_t(&self, xs: &Tensor, _train: bool) -> Tensor {
         let mut xs = xs.shallow_clone();
 
         for layer in &self.layers {
