@@ -35,14 +35,18 @@ impl PatchEmbedding {
             patch_width,
         }
     }
+
+    pub fn forward_patches(&self, patches: &Tensor) -> Tensor {
+        patches
+            .apply(&self.norm1)
+            .apply(&self.linear)
+            .apply(&self.norm2)
+    }
 }
 
 impl nn::Module for PatchEmbedding {
     fn forward(&self, xs: &Tensor) -> Tensor {
-        patchify_2d(xs, self.patch_height, self.patch_width)
-            .apply(&self.norm1)
-            .apply(&self.linear)
-            .apply(&self.norm2)
+        self.forward_patches(&patchify_2d(xs, self.patch_height, self.patch_width))
     }
 }
 

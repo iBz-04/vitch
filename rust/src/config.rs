@@ -156,3 +156,26 @@ impl Default for ViT3DConfig {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct MAEConfig {
+    pub encoder: ViTConfig,
+    pub decoder_dim: i64,
+    pub masking_ratio: f64,
+    pub decoder_depth: usize,
+    pub decoder_heads: i64,
+    pub decoder_dim_head: i64,
+}
+
+impl Default for MAEConfig {
+    fn default() -> Self {
+        Self {
+            encoder: ViTConfig::default(),
+            decoder_dim: 512,
+            masking_ratio: 0.75,
+            decoder_depth: 1,
+            decoder_heads: 8,
+            decoder_dim_head: 64,
+        }
+    }
+}

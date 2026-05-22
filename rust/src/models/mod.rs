@@ -1,5 +1,6 @@
 pub mod deep_vit;
 pub mod local_vit;
+pub mod mae;
 pub mod parallel_vit;
 pub mod simple_vit;
 pub mod simple_vit_1d;
@@ -15,6 +16,7 @@ pub mod vit_with_patch_dropout;
 
 pub use deep_vit::DeepViT;
 pub use local_vit::LocalViT;
+pub use mae::MAE;
 pub use parallel_vit::ParallelViT;
 pub use simple_vit::SimpleViT;
 pub use simple_vit_1d::SimpleViT1D;
