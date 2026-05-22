@@ -296,3 +296,36 @@ impl Default for CvTConfig {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct PiTConfig {
+    pub image_size: i64,
+    pub patch_size: i64,
+    pub num_classes: i64,
+    pub dim: i64,
+    pub depths: Vec<usize>,
+    pub heads: Vec<i64>,
+    pub mlp_dim: i64,
+    pub channels: i64,
+    pub dim_head: i64,
+    pub dropout: f64,
+    pub emb_dropout: f64,
+}
+
+impl Default for PiTConfig {
+    fn default() -> Self {
+        Self {
+            image_size: 224,
+            patch_size: 14,
+            num_classes: 1000,
+            dim: 256,
+            depths: vec![2, 2, 2],
+            heads: vec![4, 8, 16],
+            mlp_dim: 512,
+            channels: 3,
+            dim_head: 64,
+            dropout: 0.0,
+            emb_dropout: 0.0,
+        }
+    }
+}

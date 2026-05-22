@@ -2,7 +2,7 @@ use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
     CCT, CCTConfig, CvT, CvTConfig, CvTStageConfig, DeepViT, ImageSize, LocalViT, MAE, MAEConfig,
-    ParallelViT, Pool, SimMIM, SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D,
+    ParallelViT, PiT, PiTConfig, Pool, SimMIM, SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D,
     SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D,
     ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTForSmallDataset, ViTWithDecorr,
     ViTWithDecorrConfig, ViTWithPatchDropout,
@@ -443,6 +443,29 @@ fn cvt_outputs_logits_shape() {
                 CvTStageConfig::new(64, 3, 2, 3, 1, 2, 1, 2),
                 CvTStageConfig::new(128, 3, 2, 3, 1, 4, 1, 2),
             ],
+            dim_head: 32,
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn pit_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = PiT::new(
+        &vs.root(),
+        PiTConfig {
+            image_size: 64,
+            patch_size: 8,
+            num_classes: 10,
+            dim: 64,
+            depths: vec![1, 1],
+            heads: vec![2, 4],
+            mlp_dim: 128,
             dim_head: 32,
             ..Default::default()
         },
