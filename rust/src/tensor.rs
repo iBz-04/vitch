@@ -206,3 +206,108 @@ pub fn repeat_token(xs: &Tensor, batch: i64) -> Tensor {
         _ => panic!("expected token tensor with shape [tokens, dim] or [1, tokens, dim]"),
     }
 }
+
+pub fn image_to_tokens(xs: &Tensor) -> Tensor {
+    let size = xs.size();
+    assert_eq!(
+        size.len(),
+        4,
+        "expected image tensor with shape [batch, channels, height, width]"
+    );
+    let batch = size[0];
+    let channels = size[1];
+    let height = size[2];
+    let width = size[3];
+
+    xs.permute([0, 2, 3, 1])
+        .contiguous()
+        .view([batch, height * width, channels])
+}
+
+pub fn tokens_to_image(xs: &Tensor, height: i64, width: i64) -> Tensor {
+    let size = xs.size();
+    assert_eq!(
+        size.len(),
+        3,
+        "expected token tensor with shape [batch, tokens, channels]"
+    );
+    let batch = size[0];
+    let tokens = size[1];
+    let channels = size[2];
+    assert_eq!(tokens, height * width, "tokens must match image grid");
+
+    xs.view([batch, height, width, channels])
+        .permute([0, 3, 1, 2])
+        .contiguous()
+}
+
+pub fn window_partition(xs: &Tensor, window_height: i64, window_width: i64) -> Tensor {
+    let size = xs.size();
+    assert_eq!(
+        size.len(),
+        4,
+        "expected image tensor with shape [batch, channels, height, width]"
+    );
+    let batch = size[0];
+    let channels = size[1];
+    let height = size[2];
+    let width = size[3];
+    assert_image_patchable(height, width, window_height, window_width);
+    let grid_h = height / window_height;
+    let grid_w = width / window_width;
+
+    xs.view([
+        batch,
+        channels,
+        grid_h,
+        window_height,
+        grid_w,
+        window_width,
+    ])
+    .permute([0, 2, 4, 1, 3, 5])
+    .contiguous()
+    .view([
+        batch * grid_h * grid_w,
+        channels,
+        window_height,
+        window_width,
+    ])
+}
+
+pub fn window_unpartition(
+    windows: &Tensor,
+    batch: i64,
+    height: i64,
+    width: i64,
+    window_height: i64,
+    window_width: i64,
+) -> Tensor {
+    let size = windows.size();
+    assert_eq!(
+        size.len(),
+        4,
+        "expected window tensor with shape [windows, channels, height, width]"
+    );
+    let channels = size[1];
+    assert_image_patchable(height, width, window_height, window_width);
+    let grid_h = height / window_height;
+    let grid_w = width / window_width;
+    assert_eq!(
+        size[0],
+        batch * grid_h * grid_w,
+        "window count must match batch and image grid"
+    );
+
+    windows
+        .view([
+            batch,
+            grid_h,
+            grid_w,
+            channels,
+            window_height,
+            window_width,
+        ])
+        .permute([0, 3, 1, 4, 2, 5])
+        .contiguous()
+        .view([batch, channels, height, width])
+}

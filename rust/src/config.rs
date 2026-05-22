@@ -364,3 +364,183 @@ impl Default for LeViTConfig {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct CompactVisionConfig {
+    pub image_size: ImageSize,
+    pub patch_size: ImageSize,
+    pub num_classes: i64,
+    pub dim: i64,
+    pub depth: usize,
+    pub heads: i64,
+    pub mlp_dim: i64,
+    pub channels: i64,
+    pub dim_head: i64,
+    pub dropout: f64,
+    pub emb_dropout: f64,
+    pub pool: Pool,
+}
+
+impl Default for CompactVisionConfig {
+    fn default() -> Self {
+        Self {
+            image_size: ImageSize::square(224),
+            patch_size: ImageSize::square(16),
+            num_classes: 1000,
+            dim: 256,
+            depth: 4,
+            heads: 4,
+            mlp_dim: 512,
+            channels: 3,
+            dim_head: 64,
+            dropout: 0.0,
+            emb_dropout: 0.0,
+            pool: Pool::Mean,
+        }
+    }
+}
+
+macro_rules! compact_config_alias {
+    ($name:ident) => {
+        pub type $name = CompactVisionConfig;
+    };
+}
+
+compact_config_alias!(MobileViTConfig);
+compact_config_alias!(CaiTConfig);
+compact_config_alias!(XCiTConfig);
+compact_config_alias!(NesTConfig);
+compact_config_alias!(SepViTConfig);
+compact_config_alias!(CrossFormerConfig);
+compact_config_alias!(TwinsSVTConfig);
+compact_config_alias!(MaxViTConfig);
+compact_config_alias!(RegionViTConfig);
+compact_config_alias!(NaViTConfig);
+compact_config_alias!(NaViTNestedTensorConfig);
+compact_config_alias!(ATSConfig);
+compact_config_alias!(MPPConfig);
+compact_config_alias!(MP3Config);
+compact_config_alias!(DINOConfig);
+
+#[derive(Debug, Clone)]
+pub struct DistillConfig {
+    pub student: CompactVisionConfig,
+    pub teacher_dim: i64,
+    pub distill_dim: i64,
+    pub temperature: f64,
+}
+
+impl Default for DistillConfig {
+    fn default() -> Self {
+        Self {
+            student: CompactVisionConfig::default(),
+            teacher_dim: 1000,
+            distill_dim: 1000,
+            temperature: 1.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ViViTConfig {
+    pub image_size: ImageSize,
+    pub image_patch_size: ImageSize,
+    pub frames: i64,
+    pub frame_patch_size: i64,
+    pub num_classes: i64,
+    pub dim: i64,
+    pub depth: usize,
+    pub heads: i64,
+    pub mlp_dim: i64,
+    pub channels: i64,
+    pub dim_head: i64,
+    pub dropout: f64,
+    pub emb_dropout: f64,
+}
+
+impl Default for ViViTConfig {
+    fn default() -> Self {
+        Self {
+            image_size: ImageSize::square(128),
+            image_patch_size: ImageSize::square(16),
+            frames: 8,
+            frame_patch_size: 2,
+            num_classes: 1000,
+            dim: 256,
+            depth: 4,
+            heads: 4,
+            mlp_dim: 512,
+            channels: 3,
+            dim_head: 64,
+            dropout: 0.0,
+            emb_dropout: 0.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct AcceptVideoWrapperConfig {
+    pub image_model: CompactVisionConfig,
+    pub frames: i64,
+}
+
+impl Default for AcceptVideoWrapperConfig {
+    fn default() -> Self {
+        Self {
+            image_model: CompactVisionConfig::default(),
+            frames: 8,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct VATConfig {
+    pub image_size: ImageSize,
+    pub patch_size: ImageSize,
+    pub frames: i64,
+    pub action_dim: i64,
+    pub num_classes: i64,
+    pub dim: i64,
+    pub depth: usize,
+    pub heads: i64,
+    pub mlp_dim: i64,
+    pub channels: i64,
+    pub dim_head: i64,
+    pub dropout: f64,
+}
+
+impl Default for VATConfig {
+    fn default() -> Self {
+        Self {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(16),
+            frames: 4,
+            action_dim: 8,
+            num_classes: 1000,
+            dim: 256,
+            depth: 4,
+            heads: 4,
+            mlp_dim: 512,
+            channels: 3,
+            dim_head: 64,
+            dropout: 0.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct VAATConfig {
+    pub vat: VATConfig,
+    pub audio_bins: i64,
+    pub audio_frames: i64,
+}
+
+impl Default for VAATConfig {
+    fn default() -> Self {
+        Self {
+            vat: VATConfig::default(),
+            audio_bins: 32,
+            audio_frames: 32,
+        }
+    }
+}
