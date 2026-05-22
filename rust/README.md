@@ -24,6 +24,7 @@ cargo run --example vit_inference
 cargo run --example cct_inference
 cargo run --example vit_1d
 cargo run --example vit_3d
+cargo run --example vit_for_small_dataset
 cargo run --example decorr_smoke_train
 cargo run --example mae_smoke_train
 cargo run --example simmim_smoke_train

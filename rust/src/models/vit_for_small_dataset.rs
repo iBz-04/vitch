@@ -15,13 +15,7 @@ struct ShiftedPatchEmbedding {
 }
 
 impl ShiftedPatchEmbedding {
-    fn new(
-        vs: &nn::Path,
-        channels: i64,
-        dim: i64,
-        patch_height: i64,
-        patch_width: i64,
-    ) -> Self {
+    fn new(vs: &nn::Path, channels: i64, dim: i64, patch_height: i64, patch_width: i64) -> Self {
         let patch_dim = patch_dim(channels * 5, patch_height, patch_width);
         let norm = nn::layer_norm(vs / "norm", vec![patch_dim], Default::default());
         let linear = nn::linear(vs / "linear", patch_dim, dim, Default::default());
@@ -60,6 +54,7 @@ struct LocalSelfAttention {
     to_out: nn::Linear,
     temperature: Tensor,
     heads: i64,
+    dropout: f64,
 }
 
 impl LocalSelfAttention {
@@ -78,7 +73,11 @@ impl LocalSelfAttention {
             },
         );
         let to_out = nn::linear(vs / "to_out", inner_dim, dim, Default::default());
-        let temperature = vs.var("temperature", &[], nn::Init::Const((dim_head as f64).powf(-0.5).ln()));
+        let temperature = vs.var(
+            "temperature",
+            &[],
+            nn::Init::Const((dim_head as f64).powf(-0.5).ln()),
+        );
 
         Self {
             norm,
@@ -86,12 +85,13 @@ impl LocalSelfAttention {
             to_out,
             temperature,
             heads,
+            dropout,
         }
     }
 }
 
 impl nn::ModuleT for LocalSelfAttention {
-    fn forward_t(&self, xs: &Tensor, _train: bool) -> Tensor {
+    fn forward_t(&self, xs: &Tensor, train: bool) -> Tensor {
         let qkv = xs.apply(&self.norm).apply(&self.to_qkv).chunk(3, -1);
         let q = split_heads(&qkv[0], self.heads);
         let k = split_heads(&qkv[1], self.heads);
@@ -102,9 +102,11 @@ impl nn::ModuleT for LocalSelfAttention {
             .unsqueeze(0);
         let dots = (q.matmul(&k.transpose(-1, -2)) * self.temperature.exp())
             .masked_fill(&mask, f64::NEG_INFINITY);
-        let attn = dots.softmax(-1, dots.kind());
+        let attn = dots.softmax(-1, dots.kind()).dropout(self.dropout, train);
 
-        merge_heads(&attn.matmul(&v)).apply(&self.to_out)
+        merge_heads(&attn.matmul(&v))
+            .apply(&self.to_out)
+            .dropout(self.dropout, train)
     }
 }
 
@@ -115,14 +117,7 @@ struct SmallDatasetTransformerLayer {
 }
 
 impl SmallDatasetTransformerLayer {
-    fn new(
-        vs: &nn::Path,
-        dim: i64,
-        heads: i64,
-        dim_head: i64,
-        mlp_dim: i64,
-        dropout: f64,
-    ) -> Self {
+    fn new(vs: &nn::Path, dim: i64, heads: i64, dim_head: i64, mlp_dim: i64, dropout: f64) -> Self {
         let attention = LocalSelfAttention::new(&(vs / "attention"), dim, heads, dim_head, dropout);
         let feed_forward = FeedForward::new(&(vs / "feed_forward"), dim, mlp_dim, dropout);
 
