@@ -1,4 +1,5 @@
 pub mod deep_vit;
+pub mod parallel_vit;
 pub mod simple_vit;
 pub mod simple_vit_1d;
 pub mod simple_vit_3d;
@@ -12,6 +13,7 @@ pub mod vit_with_decorr;
 pub mod vit_with_patch_dropout;
 
 pub use deep_vit::DeepViT;
+pub use parallel_vit::ParallelViT;
 pub use simple_vit::SimpleViT;
 pub use simple_vit_1d::SimpleViT1D;
 pub use simple_vit_3d::SimpleViT3D;

@@ -1,9 +1,10 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
-    ImageSize, Pool, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
-    SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig,
-    ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
+    DeepViT, ImageSize, ParallelViT, Pool, SimpleViT, SimpleViT1D, SimpleViT3D,
+    SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D,
+    ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTWithDecorr, ViTWithDecorrConfig,
+    ViTWithPatchDropout,
 };
 
 #[test]
@@ -281,6 +282,76 @@ fn vit_with_patch_dropout_outputs_logits_shape() {
     );
     let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
     let logits = model.forward_t(&img, true);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn simple_vit_with_qk_norm_outputs_embedding_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = SimpleViTWithQkNorm::new(
+        &vs.root(),
+        ViTConfig {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(16),
+            num_classes: 10,
+            dim: 128,
+            depth: 2,
+            heads: 4,
+            dim_head: 32,
+            mlp_dim: 256,
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let embeddings = model.forward_t(&img, false);
+
+    assert_eq!(embeddings.size(), [2, 128]);
+}
+
+#[test]
+fn deep_vit_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = DeepViT::new(
+        &vs.root(),
+        ViTConfig {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(16),
+            num_classes: 10,
+            dim: 128,
+            depth: 2,
+            heads: 4,
+            dim_head: 32,
+            mlp_dim: 256,
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn parallel_vit_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = ParallelViT::new(
+        &vs.root(),
+        ViTConfig {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(16),
+            num_classes: 10,
+            dim: 128,
+            depth: 2,
+            heads: 4,
+            dim_head: 32,
+            mlp_dim: 256,
+            ..Default::default()
+        },
+        2,
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
 
     assert_eq!(logits.size(), [2, 10]);
 }
