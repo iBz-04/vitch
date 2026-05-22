@@ -6,31 +6,131 @@ This project is a small Rust deep learning crate for ViT-style models. It gives 
 
 ## Visual References
 
-These images show the idea behind the model.
+### Vision Transformer Overview
 
-### 1. Image To Patches
+![Vision Transformer](images/vit.gif)
 
-![Image split into patches](images/patches.png)
+The image is split into fixed-size patches, projected into tokens, processed through transformer layers, and pooled into a final prediction.
 
-The image is split into small fixed-size patches. A patch is like one word in a sentence.
+### Model Architectures
 
-### 2. Patches To Tokens
+#### CaiT
 
-![Patches turned into tokens](images/tokens.png)
+![CaiT](images/cait.png)
 
-Each patch is flattened into numbers, then projected into a learned vector. That vector is called a token.
+#### CvT
 
-### 3. Attention Between Patches
+![CvT](images/cvt.png)
 
-![Attention between image patches](images/attention.png)
+#### PiT
 
-Self-attention lets every patch look at every other patch. This helps the model connect far away parts of the image.
+![PiT](images/pit.png)
 
-### 4. Final Prediction
+#### LeViT
 
-![Final class prediction](images/output.png)
+![LeViT](images/levit.png)
 
-After the transformer layers, the model pools the tokens and predicts the final class.
+#### MaxViT
+
+![MaxViT](images/max-vit.png)
+
+#### MAE
+
+![MAE](images/mae.png)
+
+#### SimMIM
+
+![SimMIM](images/simmim.png)
+
+#### DINO
+
+![DINO](images/dino.png)
+
+#### ViViT
+
+![ViViT](images/vivit.png)
+
+#### MobileViT
+
+![MobileViT](images/mbvit.png)
+
+#### Distillation
+
+![Distillation](images/distill.png)
+
+#### T2T ViT
+
+![T2T ViT](images/t2t.png)
+
+#### CrossViT
+
+![CrossViT](images/cross_vit.png)
+
+#### CrossFormer
+
+![CrossFormer](images/crossformer.png)
+
+![CrossFormer Detail](images/crossformer2.png)
+
+#### ViT for Small Datasets
+
+![ViT for Small Datasets](images/vit_for_small_datasets.png)
+
+#### ATS
+
+![ATS](images/ats.png)
+
+#### PatchMerger
+
+![PatchMerger](images/patch_merger.png)
+
+#### NesT
+
+![NesT](images/nest.png)
+
+#### RegionViT
+
+![RegionViT](images/regionvit.png)
+
+![RegionViT Detail](images/regionvit2.png)
+
+#### Scalable ViT
+
+![Scalable ViT](images/scalable-vit-1.png)
+
+![Scalable ViT Detail](images/scalable-vit-2.png)
+
+#### SepViT
+
+![SepViT](images/sep-vit.png)
+
+#### EsViT
+
+![EsViT](images/esvit.png)
+
+#### Parallel ViT
+
+![Parallel ViT](images/parallel-vit.png)
+
+#### NaViT
+
+![NaViT](images/navit.png)
+
+#### MP3
+
+![MP3](images/mp3.png)
+
+#### Learnable Memory ViT
+
+![Learnable Memory ViT](images/learnable-memory-vit.png)
+
+#### Twins SVT
+
+![Twins SVT](images/twins_svt.png)
+
+#### XCiT
+
+![XCiT](images/xcit.png)
 
 ## What This Project Implements
 
