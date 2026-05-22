@@ -406,7 +406,6 @@ macro_rules! compact_config_alias {
     };
 }
 
-compact_config_alias!(CaiTConfig);
 compact_config_alias!(XCiTConfig);
 compact_config_alias!(NesTConfig);
 compact_config_alias!(SepViTConfig);
@@ -418,6 +417,43 @@ compact_config_alias!(ATSConfig);
 compact_config_alias!(MPPConfig);
 compact_config_alias!(MP3Config);
 compact_config_alias!(DINOConfig);
+
+#[derive(Debug, Clone)]
+pub struct CaiTConfig {
+    pub image_size: ImageSize,
+    pub patch_size: ImageSize,
+    pub num_classes: i64,
+    pub dim: i64,
+    pub depth: usize,
+    pub cls_depth: usize,
+    pub heads: i64,
+    pub mlp_dim: i64,
+    pub channels: i64,
+    pub dim_head: i64,
+    pub dropout: f64,
+    pub emb_dropout: f64,
+    pub layer_dropout: f64,
+}
+
+impl Default for CaiTConfig {
+    fn default() -> Self {
+        Self {
+            image_size: ImageSize::square(224),
+            patch_size: ImageSize::square(16),
+            num_classes: 1000,
+            dim: 256,
+            depth: 4,
+            cls_depth: 2,
+            heads: 4,
+            mlp_dim: 512,
+            channels: 3,
+            dim_head: 64,
+            dropout: 0.0,
+            emb_dropout: 0.0,
+            layer_dropout: 0.0,
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 pub struct TwinsSVTStageConfig {

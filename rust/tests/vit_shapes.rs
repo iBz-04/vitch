@@ -8,9 +8,9 @@ use vit_tch::{
     NaViT, NaViTConfig, NaViTNestedTensor, NaViTNestedTensorConfig, NesT, NesTConfig, ParallelViT,
     PiT, PiTConfig, Pool, RegionViT, RegionViTConfig, SepViT, SepViTConfig, SimMIM, SimMIMConfig,
     SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout, SimpleViTWithQkNorm,
-    SimpleViTWithRegisterTokens, TwinsSVT, TwinsSVTConfig, VAAT, VAATConfig, VAT, VATConfig, ViT,
-    ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTForSmallDataset, ViTWithDecorr,
-    ViTWithDecorrConfig, ViTWithPatchDropout, ViViT, ViViTConfig, XCiT, XCiTConfig,
+    SimpleViTWithRegisterTokens, TwinsSVT, TwinsSVTConfig, TwinsSVTStageConfig, VAAT, VAATConfig,
+    VAT, VATConfig, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTForSmallDataset,
+    ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout, ViViT, ViViTConfig, XCiT, XCiTConfig,
 };
 
 #[test]
@@ -574,7 +574,16 @@ fn attention_family_models_output_logits_shape() {
         CaiT::new(
             &vs.root(),
             CaiTConfig {
-                ..compact_test_config(10)
+                image_size: ImageSize::square(32),
+                patch_size: ImageSize::square(8),
+                num_classes: 10,
+                dim: 64,
+                depth: 1,
+                cls_depth: 1,
+                heads: 2,
+                dim_head: 32,
+                mlp_dim: 128,
+                ..Default::default()
             },
         )
         .forward_t(&img, false)
@@ -645,7 +654,17 @@ fn hierarchical_attention_family_models_output_logits_shape() {
         TwinsSVT::new(
             &vs.root(),
             TwinsSVTConfig {
-                ..compact_test_config(10)
+                num_classes: 10,
+                stages: [
+                    TwinsSVTStageConfig::new(16, 2, 2, 2, 1),
+                    TwinsSVTStageConfig::new(24, 2, 2, 2, 1),
+                    TwinsSVTStageConfig::new(32, 2, 2, 2, 1),
+                    TwinsSVTStageConfig::new(48, 2, 2, 1, 1),
+                ],
+                heads: 2,
+                dim_head: 8,
+                mlp_mult: 2,
+                ..Default::default()
             },
         )
         .forward_t(&img, false)

@@ -220,13 +220,9 @@ impl nn::ModuleT for LocalAttention {
             .apply(&self.to_out)
             .dropout(self.dropout, train);
 
+        let _ = (grid_h, grid_w);
+
         window_unpartition(&out, batch, height, width, self.patch_size, self.patch_size)
-            .view([
-                batch,
-                self.heads * self.dim_head,
-                grid_h * self.patch_size,
-                grid_w * self.patch_size,
-            ])
     }
 }
 
@@ -491,8 +487,12 @@ impl TwinsStage {
         is_last: bool,
     ) -> Self {
         let has_local = !is_last;
-        let patch_embedding =
-            PatchEmbedding::new(&(vs / "patch_embedding"), dim_in, config.emb_dim, config.patch_size);
+        let patch_embedding = PatchEmbedding::new(
+            &(vs / "patch_embedding"),
+            dim_in,
+            config.emb_dim,
+            config.patch_size,
+        );
         let pre_peg = TwinsTransformer::new(
             &(vs / "pre_peg"),
             config.emb_dim,
