@@ -1,15 +1,15 @@
 use tch::{IndexOp, Kind, Tensor, nn};
 
 use crate::{
-    config::CCTConfig,
-    layers::Transformer,
-    positional::posemb_sincos_1d,
-    tensor::repeat_token,
+    config::CCTConfig, layers::Transformer, positional::posemb_sincos_1d, tensor::repeat_token,
 };
 
 #[derive(Debug)]
 struct Tokenizer {
     conv: nn::Conv2D,
+    kernel_size: i64,
+    stride: i64,
+    padding: i64,
     pooling_kernel_size: i64,
     pooling_stride: i64,
     pooling_padding: i64,
@@ -39,6 +39,9 @@ impl Tokenizer {
 
         Self {
             conv,
+            kernel_size: config.kernel_size,
+            stride: config.stride,
+            padding: config.padding,
             pooling_kernel_size: config.pooling_kernel_size,
             pooling_stride: config.pooling_stride,
             pooling_padding: config.pooling_padding,
@@ -46,18 +49,9 @@ impl Tokenizer {
     }
 
     fn sequence_length(&self, image_height: i64, image_width: i64) -> i64 {
-        let conv_height = conv_output_size(
-            image_height,
-            self.conv.ws.size()[2],
-            self.conv.config.padding[0],
-            self.conv.config.stride[0],
-        );
-        let conv_width = conv_output_size(
-            image_width,
-            self.conv.ws.size()[3],
-            self.conv.config.padding[1],
-            self.conv.config.stride[1],
-        );
+        let conv_height =
+            conv_output_size(image_height, self.kernel_size, self.padding, self.stride);
+        let conv_width = conv_output_size(image_width, self.kernel_size, self.padding, self.stride);
         let pool_height = conv_output_size(
             conv_height,
             self.pooling_kernel_size,
@@ -197,7 +191,10 @@ impl nn::ModuleT for CCT {
                 .attention_pool
                 .as_ref()
                 .expect("sequence pooling head is required");
-            let weights = xs.apply(attention_pool).squeeze_dim(-1).softmax(1, Kind::Float);
+            let weights = xs
+                .apply(attention_pool)
+                .squeeze_dim(-1)
+                .softmax(1, Kind::Float);
 
             (weights.unsqueeze(-1) * xs).sum_dim_intlist(&[1_i64][..], false, Kind::Float)
         } else {

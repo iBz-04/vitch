@@ -1,10 +1,10 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
-    DeepViT, ImageSize, LocalViT, MAE, MAEConfig, ParallelViT, Pool, SimMIM, SimMIMConfig,
-    SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout, SimpleViTWithQkNorm,
-    SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig,
-    ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
+    CCT, CCTConfig, DeepViT, ImageSize, LocalViT, MAE, MAEConfig, ParallelViT, Pool, SimMIM,
+    SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
+    SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig,
+    ViTConfig, ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
 };
 
 #[test]
@@ -370,6 +370,34 @@ fn local_vit_outputs_logits_shape() {
             heads: 4,
             dim_head: 32,
             mlp_dim: 256,
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn cct_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = CCT::new(
+        &vs.root(),
+        CCTConfig {
+            image_size: ImageSize::square(64),
+            num_classes: 10,
+            embedding_dim: 128,
+            num_layers: 2,
+            num_heads: 4,
+            mlp_ratio: 2,
+            channels: 3,
+            kernel_size: 3,
+            stride: 1,
+            padding: 1,
+            pooling_kernel_size: 3,
+            pooling_stride: 2,
+            pooling_padding: 1,
             ..Default::default()
         },
     );
