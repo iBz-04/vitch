@@ -1,11 +1,11 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
-    CCT, CCTConfig, CvT, CvTConfig, CvTStageConfig, DeepViT, ImageSize, LocalViT, MAE, MAEConfig,
-    ParallelViT, PiT, PiTConfig, Pool, SimMIM, SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D,
-    SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, ViT, ViT1D,
-    ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTForSmallDataset, ViTWithDecorr,
-    ViTWithDecorrConfig, ViTWithPatchDropout,
+    CCT, CCTConfig, CvT, CvTConfig, CvTStageConfig, DeepViT, ImageSize, LeViT, LeViTConfig,
+    LocalViT, MAE, MAEConfig, ParallelViT, PiT, PiTConfig, Pool, SimMIM, SimMIMConfig, SimpleViT,
+    SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout, SimpleViTWithQkNorm,
+    SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig,
+    ViTForSmallDataset, ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
 };
 
 #[test]
@@ -474,6 +474,56 @@ fn pit_outputs_logits_shape() {
     let logits = model.forward_t(&img, false);
 
     assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn levit_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = LeViT::new(
+        &vs.root(),
+        LeViTConfig {
+            image_size: 64,
+            num_classes: 10,
+            dims: vec![64, 96],
+            depths: vec![1, 1],
+            heads: vec![2, 3],
+            mlp_mult: 2,
+            stages: 2,
+            dim_key: 16,
+            dim_value: 32,
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn levit_outputs_distill_logits_when_configured() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = LeViT::new(
+        &vs.root(),
+        LeViTConfig {
+            image_size: 64,
+            num_classes: 10,
+            dims: vec![64, 96],
+            depths: vec![1, 1],
+            heads: vec![2, 3],
+            mlp_mult: 2,
+            stages: 2,
+            dim_key: 16,
+            dim_value: 32,
+            num_distill_classes: Some(5),
+            ..Default::default()
+        },
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let (logits, distill) = model.forward_t_with_distill(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+    assert_eq!(distill.expect("distill logits").size(), [2, 5]);
 }
 
 #[test]

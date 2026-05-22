@@ -329,3 +329,38 @@ impl Default for PiTConfig {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct LeViTConfig {
+    pub image_size: i64,
+    pub num_classes: i64,
+    pub dims: Vec<i64>,
+    pub depths: Vec<usize>,
+    pub heads: Vec<i64>,
+    pub mlp_mult: i64,
+    pub stages: usize,
+    pub channels: i64,
+    pub dim_key: i64,
+    pub dim_value: i64,
+    pub dropout: f64,
+    pub num_distill_classes: Option<i64>,
+}
+
+impl Default for LeViTConfig {
+    fn default() -> Self {
+        Self {
+            image_size: 224,
+            num_classes: 1000,
+            dims: vec![256, 384, 512],
+            depths: vec![4, 4, 4],
+            heads: vec![4, 6, 8],
+            mlp_mult: 2,
+            stages: 3,
+            channels: 3,
+            dim_key: 32,
+            dim_value: 64,
+            dropout: 0.0,
+            num_distill_classes: None,
+        }
+    }
+}

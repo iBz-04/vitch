@@ -1,6 +1,7 @@
 pub mod cct;
 pub mod cvt;
 pub mod deep_vit;
+pub mod levit;
 pub mod local_vit;
 pub mod mae;
 pub mod parallel_vit;
@@ -22,6 +23,7 @@ pub mod vit_with_patch_dropout;
 pub use cct::CCT;
 pub use cvt::CvT;
 pub use deep_vit::DeepViT;
+pub use levit::LeViT;
 pub use local_vit::LocalViT;
 pub use mae::MAE;
 pub use parallel_vit::ParallelViT;
