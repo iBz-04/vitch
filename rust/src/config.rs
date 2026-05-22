@@ -406,14 +406,12 @@ macro_rules! compact_config_alias {
     };
 }
 
-compact_config_alias!(MobileViTConfig);
 compact_config_alias!(CaiTConfig);
 compact_config_alias!(XCiTConfig);
 compact_config_alias!(NesTConfig);
 compact_config_alias!(SepViTConfig);
 compact_config_alias!(CrossFormerConfig);
 compact_config_alias!(TwinsSVTConfig);
-compact_config_alias!(MaxViTConfig);
 compact_config_alias!(RegionViTConfig);
 compact_config_alias!(NaViTConfig);
 compact_config_alias!(NaViTNestedTensorConfig);
@@ -421,6 +419,66 @@ compact_config_alias!(ATSConfig);
 compact_config_alias!(MPPConfig);
 compact_config_alias!(MP3Config);
 compact_config_alias!(DINOConfig);
+
+#[derive(Debug, Clone)]
+pub struct MobileViTConfig {
+    pub image_size: ImageSize,
+    pub num_classes: i64,
+    pub dims: [i64; 3],
+    pub channels: [i64; 11],
+    pub expansion: i64,
+    pub kernel_size: i64,
+    pub patch_size: ImageSize,
+    pub depths: [usize; 3],
+    pub dropout: f64,
+}
+
+impl Default for MobileViTConfig {
+    fn default() -> Self {
+        Self {
+            image_size: ImageSize::square(256),
+            num_classes: 1000,
+            dims: [144, 192, 240],
+            channels: [16, 32, 48, 48, 64, 64, 80, 80, 96, 96, 384],
+            expansion: 4,
+            kernel_size: 3,
+            patch_size: ImageSize::square(2),
+            depths: [2, 4, 3],
+            dropout: 0.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct MaxViTConfig {
+    pub num_classes: i64,
+    pub dim: i64,
+    pub depth: Vec<usize>,
+    pub dim_head: i64,
+    pub dim_conv_stem: Option<i64>,
+    pub window_size: i64,
+    pub mbconv_expansion_rate: i64,
+    pub mbconv_shrinkage_rate: i64,
+    pub dropout: f64,
+    pub channels: i64,
+}
+
+impl Default for MaxViTConfig {
+    fn default() -> Self {
+        Self {
+            num_classes: 1000,
+            dim: 64,
+            depth: vec![2, 2, 2],
+            dim_head: 32,
+            dim_conv_stem: None,
+            window_size: 7,
+            mbconv_expansion_rate: 4,
+            mbconv_shrinkage_rate: 4,
+            dropout: 0.1,
+            channels: 3,
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct DistillConfig {

@@ -551,10 +551,15 @@ fn mobile_vit_outputs_logits_shape() {
     let model = MobileViT::new(
         &vs.root(),
         MobileViTConfig {
-            ..compact_test_config(10)
+            image_size: ImageSize::square(64),
+            num_classes: 10,
+            dims: [32, 48, 64],
+            channels: [8, 8, 16, 16, 24, 24, 32, 32, 48, 48, 96],
+            depths: [1, 1, 1],
+            ..Default::default()
         },
     );
-    let img = Tensor::randn([2, 3, 32, 32], (Kind::Float, Device::Cpu));
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
     let logits = model.forward_t(&img, false);
 
     assert_eq!(logits.size(), [2, 10]);
@@ -620,6 +625,7 @@ fn attention_family_models_output_logits_shape() {
 #[test]
 fn hierarchical_attention_family_models_output_logits_shape() {
     let img = Tensor::randn([2, 3, 32, 32], (Kind::Float, Device::Cpu));
+    let max_vit_img = Tensor::randn([2, 3, 112, 112], (Kind::Float, Device::Cpu));
 
     let vs = nn::VarStore::new(Device::Cpu);
     assert_eq!(
@@ -652,10 +658,17 @@ fn hierarchical_attention_family_models_output_logits_shape() {
         MaxViT::new(
             &vs.root(),
             MaxViTConfig {
-                ..compact_test_config(10)
+                num_classes: 10,
+                dim: 16,
+                depth: vec![1, 1],
+                dim_head: 8,
+                dim_conv_stem: Some(16),
+                window_size: 7,
+                mbconv_expansion_rate: 2,
+                ..Default::default()
             },
         )
-        .forward_t(&img, false)
+        .forward_t(&max_vit_img, false)
         .size(),
         [2, 10]
     );
