@@ -1,44 +1,31 @@
 # vit-tch
 
-This repository is being rewritten as a Rust implementation of Vision Transformer models using [`tch`], the Rust bindings for LibTorch.
+Rust Vision Transformer models built on [`tch`], the Rust bindings for LibTorch.
 
-The Python implementation remains useful as the reference while the Rust crate grows, but new implementation work should happen in `rust/`.
+This repository is Rust-only. The crate lives in [`rust/`](rust/) and exposes typed configs, model structs, examples, and runtime-ready shape/smoke tests.
 
-## Current Scope
+## Build
 
-The Rust crate currently covers the clean foundation for the port:
+```bash
+cargo check --manifest-path rust/Cargo.toml --features target-checks --tests --examples
+```
 
-- Typed model config structs
-- Tensor helpers for image, sequence, and video patching
-- Shared transformer layers
-- Baseline `ViT`, `SimpleViT`, `ViT1D`, `ViT3D`, and small variants
-- `ViTWithDecorr`, `MAE`, and `SimMIM`
-- Shape tests and smoke examples
+The default crate feature uses `tch/doc-only` for lightweight type-checking without a local LibTorch runtime. Runnable tests and examples need LibTorch through `LIBTORCH`, `LIBTORCH_USE_PYTORCH=1`, or the crate's `download-libtorch` feature.
 
-## Porting Direction
+## Runtime Tests
 
-The port should continue in small, reviewable phases:
+```bash
+cargo test --manifest-path rust/Cargo.toml --no-default-features --features runtime
+```
 
-1. Keep the core Rust crate compiling and tested.
-2. Add low-risk model variants that reuse existing primitives.
-3. Extract shared helpers before introducing larger architecture families.
-4. Add focused tests for every ported public model.
-5. Avoid large monolithic files and one-off fixes.
+On macOS with Miniforge/Conda and PyTorch-provided LibTorch:
 
-High-risk features such as nested tensors, dynamic token routing, flash attention behavior, FFTs, and audio preprocessing should wait until the core crate remains stable across several model families.
+```bash
+python -m pip install --force-reinstall "torch==2.11.0" "torchvision==0.26.0"
+TORCH_LIB_DIR="$(python -c 'import pathlib, torch; print(pathlib.Path(torch.__file__).parent / "lib")')"
+VIRTUAL_ENV="$CONDA_PREFIX" LIBTORCH_USE_PYTORCH=1 DYLD_LIBRARY_PATH="$TORCH_LIB_DIR:${DYLD_LIBRARY_PATH:-}" cargo test --manifest-path rust/Cargo.toml --no-default-features --features runtime
+```
 
-## Next Phase Checklist
+## Documentation
 
-- Port compact model families one module at a time, starting with variants that reuse current transformer and tensor primitives.
-- Keep configs typed and explicit instead of passing loose option maps.
-- Wire every public model through `config.rs`, `models/mod.rs`, `lib.rs`, tests, and at least one small example when useful.
-- Prefer shared helpers for reusable behavior, but avoid broad abstractions until two or more models need the same logic.
-- Validate with `cargo fmt`, `cargo check --tests --examples`, and focused shape or smoke coverage before moving on.
-
-## Rust Crate
-
-See `rust/README.md` for build, test, and example commands.
-
-## Validation Standard
-
-Every ported model should have at least one shape test. Training-oriented wrappers should also produce a scalar loss and type-check through examples or smoke tests.
+See [`rust/README.md`](rust/README.md) for the public surface, examples, feature flags, and validation commands.
