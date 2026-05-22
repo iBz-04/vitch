@@ -65,11 +65,10 @@ impl nn::ModuleT for ReAttention {
         let attn = (q.matmul(&k.transpose(-1, -2)) * self.scale)
             .softmax(-1, q.kind())
             .dropout(self.dropout, train);
-        let attn = Tensor::einsum(
-            "b h i j, h g -> b g i j",
-            &[&attn, &self.reattn_weights],
-            &[] as &[i64],
-        );
+        let attn = attn
+            .permute([0, 2, 3, 1])
+            .matmul(&self.reattn_weights)
+            .permute([0, 3, 1, 2]);
         let attn = attn
             .permute([0, 2, 3, 1])
             .apply(&self.reattn_norm)

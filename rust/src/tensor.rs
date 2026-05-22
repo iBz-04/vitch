@@ -198,12 +198,13 @@ pub fn merge_heads(xs: &Tensor) -> Tensor {
 pub fn repeat_token(xs: &Tensor, batch: i64) -> Tensor {
     let size = xs.size();
     match size.as_slice() {
+        [dim] => xs.unsqueeze(0).repeat([batch, 1]).view([batch, 1, *dim]),
         [tokens, dim] => xs
             .unsqueeze(0)
             .repeat([batch, 1, 1])
             .view([batch, *tokens, *dim]),
         [1, tokens, dim] => xs.repeat([batch, 1, 1]).view([batch, *tokens, *dim]),
-        _ => panic!("expected token tensor with shape [tokens, dim] or [1, tokens, dim]"),
+        _ => panic!("expected token tensor with shape [dim], [tokens, dim], or [1, tokens, dim]"),
     }
 }
 

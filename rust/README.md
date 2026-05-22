@@ -50,6 +50,14 @@ Full tests require a usable LibTorch runtime. You can provide one with `LIBTORCH
 cargo check --features target-checks --tests --examples
 ```
 
+On macOS with Miniforge/Conda, `torch-sys 0.24.0` expects PyTorch `2.11.0`. Install a matching Python package and expose PyTorch's bundled dylibs before running runtime tests:
+
+```bash
+python -m pip install --force-reinstall "torch==2.11.0" "torchvision==0.26.0"
+TORCH_LIB_DIR="$(python -c 'import pathlib, torch; print(pathlib.Path(torch.__file__).parent / "lib")')"
+VIRTUAL_ENV="$CONDA_PREFIX" LIBTORCH_USE_PYTORCH=1 DYLD_LIBRARY_PATH="$TORCH_LIB_DIR:${DYLD_LIBRARY_PATH:-}" cargo test --manifest-path rust/Cargo.toml --no-default-features --features runtime
+```
+
 ## Public Surface
 
 The crate exposes typed configs and model structs from the root module:

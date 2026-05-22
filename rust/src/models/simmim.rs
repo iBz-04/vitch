@@ -88,15 +88,16 @@ impl nn::ModuleT for SimMIM {
         let num_patches = patches.size()[1];
         let tokens = self.patch_embedding.forward_patches(&patches) + &self.pos_embedding;
         let mask = RandomMask::new(batch, num_patches, self.masking_ratio, xs.device());
-        let mask_bool = Tensor::zeros([batch, num_patches], (Kind::Bool, xs.device()))
-            .scatter_value(1, &mask.masked_indices, 1);
+        let mask_float = Tensor::zeros([batch, num_patches], (Kind::Float, xs.device()))
+            .scatter_value(1, &mask.masked_indices, 1)
+            .unsqueeze(-1);
         let mask_tokens = self
             .mask_token
             .unsqueeze(0)
             .unsqueeze(0)
             .repeat([batch, num_patches, 1])
             + &self.pos_embedding;
-        let tokens = mask_bool.unsqueeze(-1).where_self(&mask_tokens, &tokens);
+        let tokens = &mask_tokens * &mask_float + tokens * (1.0 - mask_float);
         let encoded = self.encoder.forward_t(&tokens, train);
         let encoded_mask_tokens = gather_tokens(&encoded, &mask.masked_indices);
         let pred_pixel_values = encoded_mask_tokens.apply(&self.to_pixels);
