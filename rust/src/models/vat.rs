@@ -59,10 +59,12 @@ impl VAT {
         let frames = size[2];
         let height = size[3];
         let width = size[4];
-        let frames_as_batch = video
-            .permute([0, 2, 1, 3, 4])
-            .contiguous()
-            .view([batch * frames, channels, height, width]);
+        let frames_as_batch = video.permute([0, 2, 1, 3, 4]).contiguous().view([
+            batch * frames,
+            channels,
+            height,
+            width,
+        ]);
         let visual = self
             .visual
             .forward_t(&frames_as_batch, train)
@@ -78,7 +80,10 @@ impl nn::ModuleT for VAT {
     fn forward_t(&self, xs: &Tensor, train: bool) -> Tensor {
         let batch = xs.size()[0];
         let frames = xs.size()[2];
-        let actions = Tensor::zeros([batch, frames, self.action_proj.ws.size()[1]], (xs.kind(), xs.device()));
+        let actions = Tensor::zeros(
+            [batch, frames, self.action_proj.ws.size()[1]],
+            (xs.kind(), xs.device()),
+        );
 
         self.forward_t_with_actions(xs, &actions, train)
     }

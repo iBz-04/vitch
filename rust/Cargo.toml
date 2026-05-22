@@ -50,6 +50,12 @@ required-features = ["target-checks"]
 test = false
 
 [[example]]
+name = "mobile_vit_inference"
+path = "examples/mobile_vit_inference.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
 name = "vit_1d"
 path = "examples/vit_1d.rs"
 required-features = ["target-checks"]
@@ -58,6 +64,12 @@ test = false
 [[example]]
 name = "vit_3d"
 path = "examples/vit_3d.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "vivit_inference"
+path = "examples/vivit_inference.rs"
 required-features = ["target-checks"]
 test = false
 
@@ -82,6 +94,12 @@ test = false
 [[example]]
 name = "simmim_smoke_train"
 path = "examples/simmim_smoke_train.rs"
+required-features = ["target-checks"]
+test = false
+
+[[example]]
+name = "distill_smoke_train"
+path = "examples/distill_smoke_train.rs"
 required-features = ["target-checks"]
 test = false
 

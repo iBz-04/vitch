@@ -11,15 +11,15 @@ pub mod token;
 pub use config::{
     ATSConfig, AcceptVideoWrapperConfig, CCTConfig, CaiTConfig, CompactVisionConfig,
     CrossFormerConfig, CvTConfig, CvTStageConfig, DINOConfig, DistillConfig, ImageSize,
-    LeViTConfig, MAEConfig, MPPConfig, MP3Config, MaxViTConfig, MobileViTConfig, NaViTConfig,
+    LeViTConfig, MAEConfig, MP3Config, MPPConfig, MaxViTConfig, MobileViTConfig, NaViTConfig,
     NaViTNestedTensorConfig, NesTConfig, PiTConfig, Pool, RegionViTConfig, SepViTConfig,
     SimMIMConfig, TwinsSVTConfig, VAATConfig, VATConfig, ViT1DConfig, ViT3DConfig, ViTConfig,
     ViTWithDecorrConfig, ViViTConfig, XCiTConfig,
 };
 pub use models::{
-    ATS, AcceptVideoWrapper, CCT, CaiT, CrossFormer, CvT, DINO, DeepViT, Distill, LeViT,
-    LocalViT, MAE, MPP, MP3, MaxViT, MobileViT, NaViT, NaViTNestedTensor, NesT, ParallelViT, PiT,
-    RegionViT, SepViT, SimMIM, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
+    ATS, AcceptVideoWrapper, CCT, CaiT, CrossFormer, CvT, DINO, DeepViT, Distill, LeViT, LocalViT,
+    MAE, MP3, MPP, MaxViT, MobileViT, NaViT, NaViTNestedTensor, NesT, ParallelViT, PiT, RegionViT,
+    SepViT, SimMIM, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
     SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, TwinsSVT, VAAT, VAT, ViT, ViT1D, ViT3D,
     ViTForSmallDataset, ViTWithDecorr, ViTWithPatchDropout, ViViT, XCiT,
 };

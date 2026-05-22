@@ -1,17 +1,16 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
-    ATS, ATSConfig, AcceptVideoWrapper, AcceptVideoWrapperConfig, CCT, CCTConfig, CaiT,
-    CaiTConfig, CompactVisionConfig, CrossFormer, CrossFormerConfig, CvT, CvTConfig,
-    CvTStageConfig, DINO, DINOConfig, DeepViT, Distill, DistillConfig, ImageSize, LeViT,
-    LeViTConfig, LocalViT, MAE, MAEConfig, MPP, MPPConfig, MP3, MP3Config, MaxViT, MaxViTConfig,
-    MobileViT, MobileViTConfig, NaViT, NaViTConfig, NaViTNestedTensor, NaViTNestedTensorConfig,
-    NesT, NesTConfig, ParallelViT, PiT, PiTConfig, Pool, RegionViT, RegionViTConfig, SepViT,
-    SepViTConfig, SimMIM, SimMIMConfig, SimpleViT, SimpleViT1D, SimpleViT3D,
-    SimpleViTWithPatchDropout, SimpleViTWithQkNorm, SimpleViTWithRegisterTokens, TwinsSVT,
-    TwinsSVTConfig, VAAT, VAATConfig, VAT, VATConfig, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig,
-    ViTConfig, ViTForSmallDataset, ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout, ViViT,
-    ViViTConfig, XCiT, XCiTConfig,
+    ATS, ATSConfig, AcceptVideoWrapper, AcceptVideoWrapperConfig, CCT, CCTConfig, CaiT, CaiTConfig,
+    CompactVisionConfig, CrossFormer, CrossFormerConfig, CvT, CvTConfig, CvTStageConfig, DINO,
+    DINOConfig, DeepViT, Distill, DistillConfig, ImageSize, LeViT, LeViTConfig, LocalViT, MAE,
+    MAEConfig, MP3, MP3Config, MPP, MPPConfig, MaxViT, MaxViTConfig, MobileViT, MobileViTConfig,
+    NaViT, NaViTConfig, NaViTNestedTensor, NaViTNestedTensorConfig, NesT, NesTConfig, ParallelViT,
+    PiT, PiTConfig, Pool, RegionViT, RegionViTConfig, SepViT, SepViTConfig, SimMIM, SimMIMConfig,
+    SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout, SimpleViTWithQkNorm,
+    SimpleViTWithRegisterTokens, TwinsSVT, TwinsSVTConfig, VAAT, VAATConfig, VAT, VATConfig, ViT,
+    ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig, ViTForSmallDataset, ViTWithDecorr,
+    ViTWithDecorrConfig, ViTWithPatchDropout, ViViT, ViViTConfig, XCiT, XCiTConfig,
 };
 
 #[test]
@@ -687,7 +686,10 @@ fn dynamic_and_nested_models_output_logits_shape() {
             ..compact_test_config(10)
         },
     );
-    assert_eq!(navit.forward_t_with_mask(&img, &mask, false).size(), [2, 10]);
+    assert_eq!(
+        navit.forward_t_with_mask(&img, &mask, false).size(),
+        [2, 10]
+    );
 
     let vs = nn::VarStore::new(Device::Cpu);
     let nested = NaViTNestedTensor::new(
@@ -710,7 +712,10 @@ fn dynamic_and_nested_models_output_logits_shape() {
             ..compact_test_config(10)
         },
     );
-    assert_eq!(ats.forward_t_with_keep_ratio(&img, 0.5, false).size(), [2, 10]);
+    assert_eq!(
+        ats.forward_t_with_keep_ratio(&img, 0.5, false).size(),
+        [2, 10]
+    );
 }
 
 #[test]
@@ -725,7 +730,10 @@ fn training_wrappers_output_scalar_losses() {
             ..compact_test_config(10)
         },
     );
-    assert_eq!(mpp.forward_t_with_target(&img, &target, true).size(), [] as [i64; 0]);
+    assert_eq!(
+        mpp.forward_t_with_target(&img, &target, true).size(),
+        [] as [i64; 0]
+    );
 
     let vs = nn::VarStore::new(Device::Cpu);
     let mp3 = MP3::new(
@@ -734,7 +742,10 @@ fn training_wrappers_output_scalar_losses() {
             ..compact_test_config(10)
         },
     );
-    assert_eq!(mp3.forward_t_with_target(&img, &target, true).size(), [] as [i64; 0]);
+    assert_eq!(
+        mp3.forward_t_with_target(&img, &target, true).size(),
+        [] as [i64; 0]
+    );
 
     let vs = nn::VarStore::new(Device::Cpu);
     let dino = DINO::new(
@@ -743,7 +754,10 @@ fn training_wrappers_output_scalar_losses() {
             ..compact_test_config(10)
         },
     );
-    assert_eq!(dino.forward_t_with_teacher(&img, &target, true).size(), [] as [i64; 0]);
+    assert_eq!(
+        dino.forward_t_with_teacher(&img, &target, true).size(),
+        [] as [i64; 0]
+    );
 
     let vs = nn::VarStore::new(Device::Cpu);
     let distill = Distill::new(
@@ -812,7 +826,10 @@ fn video_audio_multimodal_models_output_logits_shape() {
         },
     );
     let actions = Tensor::randn([2, 4, 6], (Kind::Float, Device::Cpu));
-    assert_eq!(vat.forward_t_with_actions(&video, &actions, false).size(), [2, 10]);
+    assert_eq!(
+        vat.forward_t_with_actions(&video, &actions, false).size(),
+        [2, 10]
+    );
 
     let vs = nn::VarStore::new(Device::Cpu);
     let vaat = VAAT::new(

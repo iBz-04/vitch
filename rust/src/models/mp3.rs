@@ -1,4 +1,4 @@
-use tch::{Reduction, Tensor, nn};
+use tch::{Reduction, Tensor, nn, nn::ModuleT};
 
 use crate::{config::MP3Config, models::compact::CompactImageTransformer};
 

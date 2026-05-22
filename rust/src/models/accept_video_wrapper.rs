@@ -28,10 +28,12 @@ impl nn::ModuleT for AcceptVideoWrapper {
         let frames = size[2];
         let height = size[3];
         let width = size[4];
-        let frames_as_batch = xs
-            .permute([0, 2, 1, 3, 4])
-            .contiguous()
-            .view([batch * frames, channels, height, width]);
+        let frames_as_batch = xs.permute([0, 2, 1, 3, 4]).contiguous().view([
+            batch * frames,
+            channels,
+            height,
+            width,
+        ]);
         let logits = self.image_model.forward_t(&frames_as_batch, train);
 
         logits

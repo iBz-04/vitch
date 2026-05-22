@@ -27,12 +27,15 @@ cargo run --no-default-features --features runtime --example cct_inference
 cargo run --no-default-features --features runtime --example cvt_inference
 cargo run --no-default-features --features runtime --example pit_inference
 cargo run --no-default-features --features runtime --example levit_inference
+cargo run --no-default-features --features runtime --example mobile_vit_inference
 cargo run --no-default-features --features runtime --example vit_1d
 cargo run --no-default-features --features runtime --example vit_3d
+cargo run --no-default-features --features runtime --example vivit_inference
 cargo run --no-default-features --features runtime --example vit_for_small_dataset
 cargo run --no-default-features --features runtime --example decorr_smoke_train
 cargo run --no-default-features --features runtime --example mae_smoke_train
 cargo run --no-default-features --features runtime --example simmim_smoke_train
+cargo run --no-default-features --features runtime --example distill_smoke_train
 ```
 
 ## Tests

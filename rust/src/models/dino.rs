@@ -1,4 +1,4 @@
-use tch::{Kind, Tensor, nn};
+use tch::{Kind, Tensor, nn, nn::ModuleT};
 
 use crate::{config::DINOConfig, models::compact::CompactImageTransformer};
 

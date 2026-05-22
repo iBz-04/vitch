@@ -1,4 +1,4 @@
-use tch::{Kind, Tensor, nn, nn::ModuleT};
+use tch::{Kind, Tensor, nn};
 
 use crate::{
     config::ViViTConfig,
@@ -30,8 +30,12 @@ impl ViViT {
             patch_height,
             patch_width,
         );
-        let to_patch_embedding =
-            nn::linear(vs / "to_patch_embedding", patch_dim, config.dim, Default::default());
+        let to_patch_embedding = nn::linear(
+            vs / "to_patch_embedding",
+            patch_dim,
+            config.dim,
+            Default::default(),
+        );
         let pos_embedding = vs.var(
             "pos_embedding",
             &[grid_t * grid_h * grid_w, config.dim],
@@ -71,9 +75,17 @@ impl ViViT {
 
 impl nn::ModuleT for ViViT {
     fn forward_t(&self, xs: &Tensor, train: bool) -> Tensor {
-        let patches = patchify_3d_flat(xs, self.frame_patch_size, self.patch_height, self.patch_width);
+        let patches = patchify_3d_flat(
+            xs,
+            self.frame_patch_size,
+            self.patch_height,
+            self.patch_width,
+        );
         let tokens = patches.apply(&self.to_patch_embedding)
-            + self.pos_embedding.narrow(0, 0, patches.size()[1]).unsqueeze(0);
+            + self
+                .pos_embedding
+                .narrow(0, 0, patches.size()[1])
+                .unsqueeze(0);
         let tokens = self
             .transformer
             .forward_t(&tokens.dropout(self.emb_dropout, train), train);

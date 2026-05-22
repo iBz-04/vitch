@@ -27,8 +27,11 @@ impl ATS {
         let keep = 1.max((tokens as f64 * keep_ratio) as i64);
         let scores = Tensor::rand([batch, tokens], (Kind::Float, xs.device()));
         let keep_indices = scores.argsort(-1, true).narrow(1, 0, keep);
-        let mask = Tensor::zeros([batch, tokens], (Kind::Bool, xs.device()))
-            .scatter_value(1, &keep_indices, 1);
+        let mask = Tensor::zeros([batch, tokens], (Kind::Bool, xs.device())).scatter_value(
+            1,
+            &keep_indices,
+            1,
+        );
 
         self.model.forward_t_with_mask(xs, Some(&mask), train)
     }

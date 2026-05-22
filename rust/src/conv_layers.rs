@@ -197,8 +197,11 @@ impl MbConv {
             1,
             hidden_dim,
         );
-        let squeeze_excite =
-            SqueezeExcite::new(&(vs / "squeeze_excite"), hidden_dim, 1.max(dim_in / shrinkage));
+        let squeeze_excite = SqueezeExcite::new(
+            &(vs / "squeeze_excite"),
+            hidden_dim,
+            1.max(dim_in / shrinkage),
+        );
         let project_conv = nn::conv2d(
             vs / "project_conv",
             hidden_dim,
@@ -232,7 +235,9 @@ impl nn::ModuleT for MbConv {
         };
         out = self.depthwise.forward_t(&out, train);
         out = out.apply(&self.squeeze_excite);
-        out = out.apply(&self.project_conv).apply_t(&self.project_bn, train);
+        out = out
+            .apply(&self.project_conv)
+            .apply_t(&self.project_bn, train);
         out = crate::layers::drop_path(&out, self.drop_prob, train);
 
         if self.residual { xs + out } else { out }

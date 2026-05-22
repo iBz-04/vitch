@@ -256,22 +256,15 @@ pub fn window_partition(xs: &Tensor, window_height: i64, window_width: i64) -> T
     let grid_h = height / window_height;
     let grid_w = width / window_width;
 
-    xs.view([
-        batch,
-        channels,
-        grid_h,
-        window_height,
-        grid_w,
-        window_width,
-    ])
-    .permute([0, 2, 4, 1, 3, 5])
-    .contiguous()
-    .view([
-        batch * grid_h * grid_w,
-        channels,
-        window_height,
-        window_width,
-    ])
+    xs.view([batch, channels, grid_h, window_height, grid_w, window_width])
+        .permute([0, 2, 4, 1, 3, 5])
+        .contiguous()
+        .view([
+            batch * grid_h * grid_w,
+            channels,
+            window_height,
+            window_width,
+        ])
 }
 
 pub fn window_unpartition(
@@ -299,14 +292,7 @@ pub fn window_unpartition(
     );
 
     windows
-        .view([
-            batch,
-            grid_h,
-            grid_w,
-            channels,
-            window_height,
-            window_width,
-        ])
+        .view([batch, grid_h, grid_w, channels, window_height, window_width])
         .permute([0, 3, 1, 4, 2, 5])
         .contiguous()
         .view([batch, channels, height, width])
