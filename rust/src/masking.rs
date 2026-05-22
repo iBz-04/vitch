@@ -9,9 +9,10 @@ pub struct RandomMask {
 impl RandomMask {
     pub fn new(batch: i64, tokens: i64, masking_ratio: f64, device: tch::Device) -> Self {
         assert!(
-            (0.0..1.0).contains(&masking_ratio),
+            masking_ratio.is_finite() && masking_ratio > 0.0 && masking_ratio < 1.0,
             "masking ratio must be between 0 and 1"
         );
+        assert!(tokens > 1, "at least two tokens are required for masking");
         let num_masked = 1.max((tokens as f64 * masking_ratio) as i64);
         assert!(
             num_masked < tokens,
