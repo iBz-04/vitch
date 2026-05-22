@@ -1,8 +1,9 @@
 use tch::nn::ModuleT;
 use tch::{Device, Kind, Tensor, nn};
 use vit_tch::{
-    ImageSize, Pool, SimpleViT, SimpleViT1D, SimpleViT3D, ViT, ViT1D, ViT1DConfig, ViT3D,
-    ViT3DConfig, ViTConfig, ViTWithDecorr, ViTWithDecorrConfig,
+    ImageSize, Pool, SimpleViT, SimpleViT1D, SimpleViT3D, SimpleViTWithPatchDropout,
+    SimpleViTWithRegisterTokens, ViT, ViT1D, ViT1DConfig, ViT3D, ViT3DConfig, ViTConfig,
+    ViTWithDecorr, ViTWithDecorrConfig, ViTWithPatchDropout,
 };
 
 #[test]
@@ -213,6 +214,75 @@ fn simple_vit_3d_outputs_logits_shape() {
     let logits = model.forward_t(&video, false);
 
     assert_eq!(logits.size(), [2, 1000]);
+}
+
+#[test]
+fn simple_vit_with_register_tokens_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = SimpleViTWithRegisterTokens::new(
+        &vs.root(),
+        ViTConfig {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(16),
+            num_classes: 10,
+            dim: 128,
+            depth: 2,
+            heads: 4,
+            mlp_dim: 256,
+            ..Default::default()
+        },
+        4,
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, false);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn simple_vit_with_patch_dropout_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = SimpleViTWithPatchDropout::new(
+        &vs.root(),
+        ViTConfig {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(16),
+            num_classes: 10,
+            dim: 128,
+            depth: 2,
+            heads: 4,
+            mlp_dim: 256,
+            ..Default::default()
+        },
+        0.5,
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, true);
+
+    assert_eq!(logits.size(), [2, 10]);
+}
+
+#[test]
+fn vit_with_patch_dropout_outputs_logits_shape() {
+    let vs = nn::VarStore::new(Device::Cpu);
+    let model = ViTWithPatchDropout::new(
+        &vs.root(),
+        ViTConfig {
+            image_size: ImageSize::square(64),
+            patch_size: ImageSize::square(16),
+            num_classes: 10,
+            dim: 128,
+            depth: 2,
+            heads: 4,
+            mlp_dim: 256,
+            ..Default::default()
+        },
+        0.25,
+    );
+    let img = Tensor::randn([2, 3, 64, 64], (Kind::Float, Device::Cpu));
+    let logits = model.forward_t(&img, true);
+
+    assert_eq!(logits.size(), [2, 10]);
 }
 
 #[test]
