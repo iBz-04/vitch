@@ -26,6 +26,28 @@ pub fn patch_dim(channels: i64, patch_height: i64, patch_width: i64) -> i64 {
     channels * patch_height * patch_width
 }
 
+pub fn assert_sequence_patchable(seq_len: i64, patch_size: i64) {
+    assert!(
+        seq_len % patch_size == 0,
+        "sequence length must be divisible by patch size"
+    );
+}
+
+pub fn assert_video_patchable(
+    frames: i64,
+    frame_patch_size: i64,
+    image_height: i64,
+    image_width: i64,
+    patch_height: i64,
+    patch_width: i64,
+) {
+    assert_image_patchable(image_height, image_width, patch_height, patch_width);
+    assert!(
+        frames % frame_patch_size == 0,
+        "frames must be divisible by frame patch size"
+    );
+}
+
 pub fn patchify_2d(xs: &Tensor, patch_height: i64, patch_width: i64) -> Tensor {
     let size = xs.size();
     assert_eq!(
@@ -49,6 +71,75 @@ pub fn patchify_2d(xs: &Tensor, patch_height: i64, patch_width: i64) -> Tensor {
             grid_h * grid_w,
             patch_height * patch_width * channels,
         ])
+}
+
+pub fn patchify_1d(xs: &Tensor, patch_size: i64) -> Tensor {
+    let size = xs.size();
+    assert_eq!(
+        size.len(),
+        3,
+        "expected sequence tensor with shape [batch, channels, length]"
+    );
+    let batch = size[0];
+    let channels = size[1];
+    let seq_len = size[2];
+    assert_sequence_patchable(seq_len, patch_size);
+    let tokens = seq_len / patch_size;
+
+    xs.view([batch, channels, tokens, patch_size])
+        .permute([0, 2, 3, 1])
+        .contiguous()
+        .view([batch, tokens, patch_size * channels])
+}
+
+pub fn patchify_3d_flat(xs: &Tensor, frame_patch_size: i64, patch_height: i64, patch_width: i64) -> Tensor {
+    let patches = patchify_3d_grid(xs, frame_patch_size, patch_height, patch_width);
+    let size = patches.size();
+    let batch = size[0];
+    let frame_tokens = size[1];
+    let height_tokens = size[2];
+    let width_tokens = size[3];
+    let dim = size[4];
+
+    patches.view([batch, frame_tokens * height_tokens * width_tokens, dim])
+}
+
+pub fn patchify_3d_grid(xs: &Tensor, frame_patch_size: i64, patch_height: i64, patch_width: i64) -> Tensor {
+    let size = xs.size();
+    assert_eq!(
+        size.len(),
+        5,
+        "expected video tensor with shape [batch, channels, frames, height, width]"
+    );
+    let batch = size[0];
+    let channels = size[1];
+    let frames = size[2];
+    let height = size[3];
+    let width = size[4];
+    assert_video_patchable(frames, frame_patch_size, height, width, patch_height, patch_width);
+    let frame_tokens = frames / frame_patch_size;
+    let height_tokens = height / patch_height;
+    let width_tokens = width / patch_width;
+
+    xs.view([
+        batch,
+        channels,
+        frame_tokens,
+        frame_patch_size,
+        height_tokens,
+        patch_height,
+        width_tokens,
+        patch_width,
+    ])
+    .permute([0, 2, 4, 6, 3, 5, 7, 1])
+    .contiguous()
+    .view([
+        batch,
+        frame_tokens,
+        height_tokens,
+        width_tokens,
+        frame_patch_size * patch_height * patch_width * channels,
+    ])
 }
 
 pub fn split_heads(xs: &Tensor, heads: i64) -> Tensor {
