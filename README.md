@@ -12,146 +12,8 @@ This project is a small Rust deep learning crate for ViT-style models. It gives 
 
 The image is split into fixed-size patches, projected into tokens, processed through transformer layers, and pooled into a final prediction.
 
-### Model Architectures
 
-#### CaiT
-
-![CaiT](images/cait.png)
-
-#### CvT
-
-![CvT](images/cvt.png)
-
-#### PiT
-
-![PiT](images/pit.png)
-
-#### LeViT
-
-![LeViT](images/levit.png)
-
-#### MaxViT
-
-![MaxViT](images/max-vit.png)
-
-#### MAE
-
-![MAE](images/mae.png)
-
-#### SimMIM
-
-![SimMIM](images/simmim.png)
-
-#### DINO
-
-![DINO](images/dino.png)
-
-#### ViViT
-
-![ViViT](images/vivit.png)
-
-#### MobileViT
-
-![MobileViT](images/mbvit.png)
-
-#### Distillation
-
-![Distillation](images/distill.png)
-
-#### T2T ViT
-
-![T2T ViT](images/t2t.png)
-
-#### CrossViT
-
-![CrossViT](images/cross_vit.png)
-
-#### CrossFormer
-
-![CrossFormer](images/crossformer.png)
-
-![CrossFormer Detail](images/crossformer2.png)
-
-#### ViT for Small Datasets
-
-![ViT for Small Datasets](images/vit_for_small_datasets.png)
-
-#### ATS
-
-![ATS](images/ats.png)
-
-#### PatchMerger
-
-![PatchMerger](images/patch_merger.png)
-
-#### NesT
-
-![NesT](images/nest.png)
-
-#### RegionViT
-
-![RegionViT](images/regionvit.png)
-
-![RegionViT Detail](images/regionvit2.png)
-
-#### Scalable ViT
-
-![Scalable ViT](images/scalable-vit-1.png)
-
-![Scalable ViT Detail](images/scalable-vit-2.png)
-
-#### SepViT
-
-![SepViT](images/sep-vit.png)
-
-#### EsViT
-
-![EsViT](images/esvit.png)
-
-#### Parallel ViT
-
-![Parallel ViT](images/parallel-vit.png)
-
-#### NaViT
-
-![NaViT](images/navit.png)
-
-#### MP3
-
-![MP3](images/mp3.png)
-
-#### Learnable Memory ViT
-
-![Learnable Memory ViT](images/learnable-memory-vit.png)
-
-#### Twins SVT
-
-![Twins SVT](images/twins_svt.png)
-
-#### XCiT
-
-![XCiT](images/xcit.png)
-
-## What This Project Implements
-
-This crate implements Vision Transformer building blocks in Rust:
-
-- patch embedding
-- position embedding
-- class token and mean pooling
-- multi-head self-attention
-- feed-forward layers
-- transformer blocks
-- image, video, and sequence variants
-- runtime examples and shape tests
-
-The public API is exported from the crate root:
-
-```rust
-use vit_tch::{ImageSize, ViT, ViTConfig};
-```
-
-## How A Vision Transformer Works
+## How it works
 
 A Vision Transformer treats an image like a sequence.
 
@@ -296,6 +158,176 @@ For a batch of 8 images:
 
 ```text
 [8, 1000]
+```
+
+### Model Architectures
+
+Each model adapts or extends the core ViT idea for a different goal or constraint.
+
+#### CaiT
+Class-Attention in Image Transformers. Separates patch and class token processing into two stages: patch self-attention first, then class-to-patch cross-attention. This lets the model go deeper without instability.
+
+![CaiT](images/cait.png)
+
+#### CvT
+Convolutional Vision Transformer. Introduces convolutional projections into token embedding and attention, combining the local inductive bias of convolutions with global transformer attention.
+
+![CvT](images/cvt.png)
+
+#### PiT
+Pooling-based Image Transformer. Applies spatial pooling to reduce the token sequence across depth, similar to how CNNs downsample feature maps.
+
+![PiT](images/pit.png)
+
+#### LeViT
+A hybrid architecture for fast inference. Uses a convolutional stem followed by strided attention to progressively shrink spatial resolution, making it suitable for edge deployment.
+
+![LeViT](images/levit.png)
+
+#### MaxViT
+Multi-Axis Vision Transformer. Alternates between local window attention and dilated grid attention, giving both fine-grained local and global coverage without quadratic cost.
+
+![MaxViT](images/max-vit.png)
+
+#### MAE
+Masked Autoencoder. Trains the encoder by masking a large fraction of patches and asking the decoder to reconstruct the missing pixel values. Learns strong representations without labels.
+
+![MAE](images/mae.png)
+
+#### SimMIM
+Simple Masked Image Modeling. Predicts raw pixel values for randomly masked patches using a single linear head, showing that simple reconstruction objectives are effective.
+
+![SimMIM](images/simmim.png)
+
+#### DINO
+Self-supervised training with self-distillation and no labels. A student network is trained to match a momentum teacher output, producing features useful for segmentation and retrieval.
+
+![DINO](images/dino.png)
+
+#### ViViT
+Video Vision Transformer. Extends ViT to video by factorizing spatial and temporal attention across frames.
+
+![ViViT](images/vivit.png)
+
+#### MobileViT
+A lightweight ViT designed for mobile devices. Combines depthwise convolutions with local transformer blocks to reduce compute while keeping accuracy.
+
+![MobileViT](images/mbvit.png)
+
+#### Distillation
+Knowledge distillation for ViT. Introduces a distillation token alongside the class token, trained to match the output of a teacher network such as a CNN.
+
+![Distillation](images/distill.png)
+
+#### T2T ViT
+Tokens-to-Token ViT. Aggregates neighboring tokens into one token across layers, progressively reducing sequence length while building richer representations.
+
+![T2T ViT](images/t2t.png)
+
+#### CrossViT
+Processes images at two different patch scales in parallel branches, then fuses information between them via cross-attention.
+
+![CrossViT](images/cross_vit.png)
+
+#### CrossFormer
+Uses cross-scale attention between tokens at different granularities, connecting coarse and fine-grained features across the hierarchy.
+
+![CrossFormer](images/crossformer.png)
+
+![CrossFormer Detail](images/crossformer2.png)
+
+#### ViT for Small Datasets
+Modifications to ViT that improve performance when training data is limited, using shifted patch tokenization and locality self-attention.
+
+![ViT for Small Datasets](images/vit_for_small_datasets.png)
+
+#### ATS
+Adaptive Token Sampling. Dynamically selects the most informative tokens at each layer, reducing computation by dropping less useful patches.
+
+![ATS](images/ats.png)
+
+#### PatchMerger
+Learns to merge patch tokens mid-network, compressing the sequence length at a fixed point to reduce the cost of later layers.
+
+![PatchMerger](images/patch_merger.png)
+
+#### NesT
+Nested ViT. Processes tokens in local blocks at each stage then aggregates them hierarchically, building a pyramid of representations similar to CNNs.
+
+![NesT](images/nest.png)
+
+#### RegionViT
+Introduces regional tokens that summarize groups of local tokens, enabling efficient global communication without attending over all patches.
+
+![RegionViT](images/regionvit.png)
+
+![RegionViT Detail](images/regionvit2.png)
+
+#### Scalable ViT
+Uses interactive window attention that scales to high resolution by splitting attention into local windows and a global context channel.
+
+![Scalable ViT](images/scalable-vit-1.png)
+
+![Scalable ViT Detail](images/scalable-vit-2.png)
+
+#### SepViT
+Separable ViT. Applies depthwise separable attention, factorizing the attention operation to reduce parameters and FLOPs.
+
+![SepViT](images/sep-vit.png)
+
+#### EsViT
+Efficient Self-supervised ViT. Extends DINO with a multi-stage architecture and region-level matching for more efficient self-supervised pretraining.
+
+![EsViT](images/esvit.png)
+
+#### Parallel ViT
+Runs multiple attention and MLP blocks in parallel rather than sequentially, then sums their outputs. Improves throughput while maintaining accuracy.
+
+![Parallel ViT](images/parallel-vit.png)
+
+#### NaViT
+Native Resolution ViT. Removes the fixed resolution constraint by packing multiple images of varying sizes into a single sequence using fractional positional embeddings.
+
+![NaViT](images/navit.png)
+
+#### MP3
+Multi-patch prediction pretraining. Predicts multiple masked patch regions simultaneously, improving the density and quality of the self-supervised signal.
+
+![MP3](images/mp3.png)
+
+#### Learnable Memory ViT
+Appends a set of learnable memory tokens to each layer's key-value pairs, giving the model access to persistent task-specific context without increasing sequence length.
+
+![Learnable Memory ViT](images/learnable-memory-vit.png)
+
+#### Twins SVT
+Twin Transformers with Spatially Separable self-attention. Alternates between local grouped attention and global strided attention to cover both fine and coarse structure efficiently.
+
+![Twins SVT](images/twins_svt.png)
+
+#### XCiT
+Cross-Covariance Image Transformer. Transposes attention to operate on the feature dimension rather than the token dimension, achieving linear complexity with respect to the number of tokens.
+
+![XCiT](images/xcit.png)
+
+
+## What This Project Implements
+
+This crate implements Vision Transformer building blocks in Rust:
+
+- patch embedding
+- position embedding
+- class token and mean pooling
+- multi-head self-attention
+- feed-forward layers
+- transformer blocks
+- image, video, and sequence variants
+- runtime examples and shape tests
+
+The public API is exported from the crate root:
+
+```rust
+use vit_tch::{ImageSize, ViT, ViTConfig};
 ```
 
 ## Example
