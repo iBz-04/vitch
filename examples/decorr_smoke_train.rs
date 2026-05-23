@@ -28,7 +28,7 @@ fn main() -> tch::Result<()> {
     let total_loss = loss + decorr_loss * 0.1;
 
     opt.backward_step(&total_loss);
-    println!("{:.6}", total_loss.double_value(&[]));
+    println!("loss: {:.6}", total_loss.double_value(&[]));
 
     Ok(())
 }

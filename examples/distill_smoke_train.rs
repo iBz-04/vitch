@@ -28,7 +28,7 @@ fn main() -> tch::Result<()> {
     let loss = model.forward_t_with_teacher(&img, &teacher, true);
 
     opt.backward_step(&loss);
-    println!("{:.6}", loss.double_value(&[]));
+    println!("loss: {:.6}", loss.double_value(&[]));
 
     Ok(())
 }

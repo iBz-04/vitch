@@ -25,7 +25,7 @@ fn main() -> tch::Result<()> {
     let loss = model.forward_t(&images, true);
 
     opt.backward_step(&loss);
-    println!("{:.6}", loss.double_value(&[]));
+    println!("loss: {:.6}", loss.double_value(&[]));
 
     Ok(())
 }

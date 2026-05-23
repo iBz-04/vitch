@@ -20,5 +20,5 @@ fn main() {
     let img = Tensor::randn([1, 3, 64, 64], (Kind::Float, Device::Cpu));
     let logits = model.forward_t(&img, false);
 
-    println!("{:?}", logits.size());
+    println!("logits shape: {:?}", logits.size());
 }

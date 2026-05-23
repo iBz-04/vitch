@@ -19,5 +19,5 @@ fn main() {
     let series = Tensor::randn([4, 3, 256], (Kind::Float, Device::Cpu));
     let logits = model.forward_t(&series, false);
 
-    println!("{:?}", logits.size());
+    println!("logits shape: {:?}", logits.size());
 }

@@ -21,5 +21,5 @@ fn main() {
     let video = Tensor::randn([4, 3, 16, 128, 128], (Kind::Float, Device::Cpu));
     let logits = model.forward_t(&video, false);
 
-    println!("{:?}", logits.size());
+    println!("logits shape: {:?}", logits.size());
 }
