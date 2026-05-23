@@ -2,7 +2,8 @@
 
 Vision Transformer models in Rust, built with [`tch`], the Rust bindings for LibTorch.
 
-This project is a Rust deep learning crate for ViT-style models. It gives you typed configs, model structs, examples, and shape tests. 
+This crate is for building and experimenting with ViT-style image, video, sequence, and self-supervised transformer models in Rust. It provides typed configs, reusable model structs, runnable examples, and shape tests for research prototypes and Rust deep learning projects.
+
 Below you will see its working principle both visually and mathematically.
 
 
@@ -384,25 +385,53 @@ Expected output shape:
 
 `dropout` and `emb_dropout` control dropout.
 
-## Included Model Families
-
-The crate includes the base `ViT` model and several related models:
-
-- `SimpleViT`
-- `ViT1D`
-- `ViT3D`
-- `ViViT`
-- `MobileViT`
-- `CaiT`
-- `CvT`
-- `PiT`
-- `LeViT`
-- `MaxViT`
-- `MAE`
-- `SimMIM`
-- `DINO`
+## Supported Models
 
 These models share the same idea: turn input into tokens, process tokens, then produce an output.
+
+| Model | Use case |
+| --- | --- |
+| `ViT` | Base Vision Transformer for image inputs |
+| `SimpleViT` | Minimal ViT variant |
+| `DeepViT` | Deeper ViT-style architecture |
+| `LocalViT` | ViT with local feature mixing |
+| `CaiT` | Class-attention image transformer |
+| `CCT` | Compact convolutional transformer |
+| `CvT` | Convolutional Vision Transformer |
+| `CrossFormer` | Cross-scale image transformer |
+| `LeViT` | Fast hybrid transformer for efficient inference |
+| `MaxViT` | Multi-axis local and global attention |
+| `MobileViT` | Lightweight mobile-oriented vision transformer |
+| `NesT` | Nested hierarchical vision transformer |
+| `PiT` | Pooling-based vision transformer |
+| `RegionViT` | Regional-token vision transformer |
+| `SepViT` | Separable attention vision transformer |
+| `TwinsSVT` | Spatially separable hierarchical transformer |
+| `XCiT` | Cross-covariance image transformer |
+| `ViTForSmallDataset` | ViT variant for smaller training datasets |
+| `ViTWithDecorr` | ViT with decorrelation auxiliary loss |
+| `ViTWithPatchDropout` | ViT with patch dropout |
+| `SimpleViTWithPatchDropout` | SimpleViT with patch dropout |
+| `SimpleViTWithQkNorm` | SimpleViT with query-key normalization |
+| `SimpleViTWithRegisterTokens` | SimpleViT with register tokens |
+| `ViT1D` | ViT for 1D sequence inputs |
+| `SimpleViT1D` | Simple ViT variant for 1D sequence inputs |
+| `ViT3D` | ViT for 3D inputs |
+| `SimpleViT3D` | Simple ViT variant for 3D inputs |
+| `ViViT` | Video Vision Transformer |
+| `AcceptVideoWrapper` | Wrapper for video-style inputs |
+| `MAE` | Masked autoencoder pretraining |
+| `SimMIM` | Simple masked image modeling |
+| `DINO` | Self-supervised distillation |
+| `Distill` | Teacher-student distillation |
+| `MP3` | Multi-patch prediction pretraining |
+| `MPP` | Masked patch prediction |
+| `NaViT` | Native-resolution ViT |
+| `NaViTNestedTensor` | NaViT variant using nested tensors |
+| `ATS` | Adaptive token sampling |
+| `VAT` | Token/attention adaptation variant |
+| `VAAT` | Attention adaptation variant |
+| `ParallelViT` | Parallel attention/MLP ViT variant |
 
 ## Build
 
