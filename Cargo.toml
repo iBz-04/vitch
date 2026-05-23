@@ -104,4 +104,4 @@ required-features = ["target-checks"]
 test = false
 
 [dependencies]
-tch = "0.24.0"
+tch = "0.20.0"

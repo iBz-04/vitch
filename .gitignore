@@ -10,3 +10,7 @@ target/
 # Test and cache outputs
 .cache/
 *.log
+
+# Local runtime environment
+.venv/
+.env.runtime

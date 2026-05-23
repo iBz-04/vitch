@@ -412,25 +412,35 @@ Run type checks:
 cargo check --features target-checks --tests --examples
 ```
 
+Set up the runtime once:
+
+```bash
+scripts/setup-runtime.sh
+```
+
 Run a basic example:
 
 ```bash
-cargo run --no-default-features --features runtime --example vit_inference
+scripts/run-example.sh vit_inference
 ```
 
 Run runtime tests:
 
 ```bash
+source .env.runtime
 cargo test --no-default-features --features runtime
 ```
 
 The default feature uses `tch/doc-only`, so type-checking does not need a local LibTorch runtime.
 
+This crate pins `tch` to a release that matches PyTorch `2.7.0`, because `tch` links against the PyTorch C++ API and must use the same library version at build and runtime.
+
 Running examples and runtime tests needs LibTorch through one of these:
 
-- `LIBTORCH`
-- `LIBTORCH_USE_PYTORCH=1`
-- `download-libtorch`
+- `scripts/setup-runtime.sh`, which creates `.venv`, installs the matching PyTorch wheel, and writes `.env.runtime`
+- `LIBTORCH`, if you already have a local LibTorch or PyTorch install
+- `LIBTORCH_USE_PYTORCH=1`, if your active Python environment already has the matching PyTorch version installed
+- `download-libtorch`, where prebuilt LibTorch archives are available
 
 ## Why ViT Matters
 
