@@ -2,6 +2,25 @@
 name = "vit_tch"
 version = "0.1.0"
 edition = "2024"
+description = "Vision Transformer models and building blocks for Rust using tch."
+license = "MIT"
+repository = "https://github.com/iBz-04/vit.rs"
+homepage = "https://github.com/iBz-04/vit.rs"
+documentation = "https://docs.rs/vit_tch"
+readme = "README.md"
+keywords = ["vision", "transformer", "vit", "tch", "pytorch"]
+categories = ["science"]
+include = [
+    "/Cargo.toml",
+    "/Cargo.lock",
+    "/LICENSE",
+    "/README.md",
+    "/src/**",
+    "/examples/**",
+    "/tests/**",
+    "/scripts/**",
+    "/images/**",
+]
 
 [features]
 default = ["doc-only"]
