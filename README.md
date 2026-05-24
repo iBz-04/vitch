@@ -488,6 +488,7 @@ The main tradeoff is data and compute. ViT models often need more training data 
 
 ## Citation
 
+```bibtex
 @software{
   author       = {Rayamah, Ibrahim},
   title        = {vit_tch: Vision Transformer models in Rust},
