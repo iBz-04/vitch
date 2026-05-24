@@ -493,6 +493,6 @@ The main tradeoff is data and compute. ViT models often need more training data 
   title        = {vit_tch: Vision Transformer models in Rust},
   year         = {2025},
   publisher    = {GitHub},
-  url          = {https://github.com/iBz-04/vit.rs}
+  url          = {https://github.com/iBz-04/vitch}
 }
 
