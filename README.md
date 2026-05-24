@@ -485,3 +485,14 @@ That makes it good at learning:
 - whole-scene context
 
 The main tradeoff is data and compute. ViT models often need more training data or stronger training methods than small convolution models.
+
+## Citation
+
+@software{
+  author       = {Rayamah, Ibrahim},
+  title        = {vit_tch: Vision Transformer models in Rust},
+  year         = {2025},
+  publisher    = {GitHub},
+  url          = {https://github.com/iBz-04/vit.rs}
+}
+
